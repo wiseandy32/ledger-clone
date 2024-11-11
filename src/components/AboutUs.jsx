@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import Slide from "./Slide";
-import aboutUsImage from "../assets/about-us-image.png";
+import aboutUsImage from "../assets/about-us-image.webp";
 
 function AboutUs() {
   return (

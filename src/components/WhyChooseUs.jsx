@@ -1,5 +1,5 @@
 import Slide from "./Slide";
-import creditCardMockup from "../assets/credit-card-mockup.png";
+import creditCardMockup from "../assets/credit-card-mockup.webp";
 
 function WhyChooseUs() {
   return (
@@ -62,7 +62,7 @@ function WhyChooseUs() {
         </div>
         <Slide xAxis={100} className={"sm:w-[40%] h-[304px] sm:h-[670px]"}>
           <img src={creditCardMockup} className="w-full h-full" alt="" />
-          {/* <img src="credit-card-mockup.png" alt="" /> */}
+          {/* <img src="credit-card-mockup.webp" alt="" /> */}
         </Slide>
       </div>
     </section>

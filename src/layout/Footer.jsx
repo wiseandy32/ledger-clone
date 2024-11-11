@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import Slide from "../components/Slide";
-import logo from "../assets/logo.png";
+import logo from "../assets/logo.webp";
 
 function Footer() {
   return (

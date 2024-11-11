@@ -1,10 +1,10 @@
 import Slide from "./Slide";
-import firstPartner from "../assets/first-partner.png";
-import secondPartner from "../assets/second-partner.png";
-import thirdPartner from "../assets/third-partner.png";
-import fourthPartner from "../assets/fourth-partner.png";
-import fifthPartner from "../assets/fifth-partner.png";
-import sixthPartner from "../assets/sixth-partner.png";
+import firstPartner from "../assets/first-partner.webp";
+import secondPartner from "../assets/second-partner.webp";
+import thirdPartner from "../assets/third-partner.webp";
+import fourthPartner from "../assets/fourth-partner.webp";
+import fifthPartner from "../assets/fifth-partner.webp";
+import sixthPartner from "../assets/sixth-partner.webp";
 
 function Partners() {
   return (

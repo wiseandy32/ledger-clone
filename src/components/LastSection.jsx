@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import Slide from "./Slide";
-import handHoldingCreditCardMockup from "../assets/hand-holding-credit-card.png";
+import handHoldingCreditCardMockup from "../assets/hand-holding-credit-card.webp";
 
 function LastSection() {
   return (
