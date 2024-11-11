@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import Slide from "./Slide";
+import handHoldingCreditCardMockup from "../assets/hand-holding-credit-card.png";
 
 function LastSection() {
   return (
@@ -25,12 +26,12 @@ function LastSection() {
             </Link>
           </Slide>
         </div>
-        <Slide
-          xAxis={90}
-          delay={0.3}
-          className="sm:w-[40%] h-[402px] bg-hand-holding-credit-card-mockup bg-no-repeat bg-contain bg-center"
-        >
-          {/* <img src={creditCardMockup} className="w-full h-full" alt="" /> */}
+        <Slide xAxis={90} delay={0.3} className="sm:w-[40%] h-[402px]">
+          <img
+            src={handHoldingCreditCardMockup}
+            className="w-full h-full object-contain"
+            alt=""
+          />
         </Slide>
       </div>
     </section>
