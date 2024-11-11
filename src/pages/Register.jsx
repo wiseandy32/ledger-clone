@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { registrationFormField } from "../data";
 import { useState } from "react";
+import registrationImage from "../assets/registration-image.webp";
 
 function Register() {
   const [error, setError] = useState("");
@@ -28,7 +29,8 @@ function Register() {
           <div className="hidden md:block w-[45%]">
             <img
               className="w-full h-full"
-              src="registration-image.webp"
+              // src="../assets/registration-image.webp"
+              src={registrationImage}
               alt=""
             />
           </div>

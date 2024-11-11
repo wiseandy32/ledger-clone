@@ -28,9 +28,9 @@ function LastSection() {
         <Slide
           xAxis={90}
           delay={0.3}
-          className="sm:w-[40%] h-[402px]  bg-hand-holding-credit-card-mockup bg-no-repeat bg-contain bg-center"
+          className="sm:w-[40%] h-[402px] bg-hand-holding-credit-card-mockup bg-no-repeat bg-contain bg-center"
         >
-          {/* <img src="credit-card-mockup.png" alt="" /> */}
+          {/* <img src={creditCardMockup} className="w-full h-full" alt="" /> */}
         </Slide>
       </div>
     </section>

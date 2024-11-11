@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import Slide from "./Slide";
+import aboutUsImage from "../assets/about-us-image.png";
 
 function AboutUs() {
   return (
@@ -29,7 +30,7 @@ function AboutUs() {
         </Slide>
         <Slide xAxis={90} delay={0.4} className={"sm:pr-10"}>
           {/* <div> */}
-          <img src="about-us-image.png" alt="" />
+          <img src={aboutUsImage} alt="" />
           {/* </div> */}
         </Slide>
       </div>

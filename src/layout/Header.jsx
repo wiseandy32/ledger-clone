@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import MobileNav from "../components/MobileNav";
+import logo from "../assets/logo.png";
 
 function Header() {
   return (
@@ -10,7 +11,7 @@ function Header() {
       >
         <MobileNav />
         <div>
-          <img src="logo.png" width={160} height={20} alt="" />
+          <img src={logo} width={160} height={20} alt="" />
         </div>
         <nav className="hidden md:flex flex-col md:flex-row gap-16 md:gap-0 pt-24 md:pt-0 md:justify-end items-center capitalize fixed md:static h-[100vh] md:h-auto w-[100vw] top-[0] left-[0] z-[999999] bg-[#0b1120]">
           <ul className="flex flex-col md:flex-row justify-center md:w-auto w-full items-center gap-4">

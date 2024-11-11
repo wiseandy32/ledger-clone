@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import Slide from "../components/Slide";
+import logo from "../assets/logo.png";
 
 function Footer() {
   return (
@@ -11,7 +12,7 @@ function Footer() {
         >
           <Slide yAxis={90} className="sm:w-[33%]">
             <div className="text-3xl sm:text-5xl font-extrabold tracking-tight text-slate-50 capitalize">
-              <img src="logo.png" width={160} height={20} alt="" />
+              <img src={logo} width={160} height={20} alt="" />
             </div>
 
             <p className="mt-4 max-w-3xl space-y-6 ">

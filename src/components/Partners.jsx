@@ -1,4 +1,10 @@
 import Slide from "./Slide";
+import firstPartner from "../assets/first-partner.png";
+import secondPartner from "../assets/second-partner.png";
+import thirdPartner from "../assets/third-partner.png";
+import fourthPartner from "../assets/fourth-partner.png";
+import fifthPartner from "../assets/fifth-partner.png";
+import sixthPartner from "../assets/sixth-partner.png";
 
 function Partners() {
   return (
@@ -13,12 +19,12 @@ function Partners() {
           </Slide>
           <div className="w-full flex flex-wrap flex-col justify-between sm:flex-row gap-5 sm:py-10 backdrop-blur-md">
             {[
-              "first-partner.png",
-              "second-partner.png",
-              "third-partner.png",
-              "fourth-partner.png",
-              "fifth-partner.png",
-              "sixth-partner.png",
+              firstPartner,
+              secondPartner,
+              thirdPartner,
+              fourthPartner,
+              fifthPartner,
+              sixthPartner,
             ].map((src, index) => (
               <Slide
                 key={src}

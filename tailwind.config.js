@@ -6,7 +6,8 @@ export default {
       backgroundImage: {
         "hero-pattern": "url(tw-hero-bg.png)",
         "credit-card-mockup": "url(credit-card-mockup.png)",
-        "hand-holding-credit-card-mockup": "url(hand-holding-credit-card.png)",
+        "hand-holding-credit-card-mockup":
+          "url(./src/assets/hand-holding-credit-card.png)",
       },
     },
   },
