@@ -1,26 +1,67 @@
 import { Link } from "react-router-dom";
 import { loginFormFields } from "../data";
-
+import welcomeBackGif from "../assets/welcome-back-optimize.gif";
+import { useLocation } from "react-router-dom";
+import { signInWithEmailAndPassword, signOut } from "firebase/auth";
+import { auth } from "../services/firebase";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+// logo link for email
+// https://imgur.com/a/6Q483dz
 function Login() {
+  const [error, setError] = useState("");
+  const { state } = useLocation();
+  const navigate = useNavigate();
+
+  console.log("l: ", state);
+
+  const login = async (e) => {
+    e.preventDefault();
+    try {
+      const formData = new FormData(e.target);
+      const email = formData.get("email");
+      const password = formData.get("password");
+      console.log(email, password);
+      const { user } = await signInWithEmailAndPassword(auth, email, password);
+      if (!user.emailVerified) {
+        signOut(auth);
+        return setError(
+          "Email verification is required. Please verify your email to proceed"
+        );
+      }
+      navigate(state?.from || "/dashboard");
+    } catch (error) {
+      const { code } = error;
+
+      if (code === "auth/invalid-credential") {
+        setError("Invalid email or password");
+      }
+    }
+  };
+
   return (
     <section className="h-[120vh] mb-[10vh] bg-bottom bg-no-repeat bg-[#0B1120] bottom-10 inset-0  sm:h-[100dvh] md:h-[105dvh] relative">
-      <div className="mt-[12vh] md:pt-[6vh] px-5 absolute inset-0 h-[135vh] w-full bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:16px_16px] md:h-full">
+      <div className="mt-[12vh] md:pt-[6vh] px-2 sm:px-5 absolute inset-0 h-[135vh] w-full bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:16px_16px] md:h-full">
         <div
           className="p-2 md:flex md:justify-between md:items-center max-w-[1200px] md:m-auto md:p-5"
           style={{ backgroundColor: "#0B1120" }}
         >
           <div className="hidden md:block w-[45%]">
-            <img
-              className="w-full h-full"
-              src="welcome-back-optimize.gif"
-              alt=""
-            />
+            <img className="w-full h-full" src={welcomeBackGif} alt="" />
           </div>
           <div className="md:w-[45%]">
-            <form className="flex flex-col gap-3">
+            <form
+              className="flex flex-col gap-3"
+              onSubmit={async (e) => await login(e)}
+            >
               <h1 className="font-extrabold text-4xl sm:text-5xl lg:text-5xl tracking-tight text-center text-white py-10 md:py-5 md:pt-10 md:w-full md:text-left">
                 Welcome back!
               </h1>
+              {!error ? null : (
+                <p className="text-white bg-red-500 w-full p-2 rounded-md font-semibold text-xs sm:text-sm">
+                  {error}
+                </p>
+              )}
               <div className="flex flex-col gap-3 md:justify-between">
                 {loginFormFields.map((field) => (
                   <div className="flex flex-col gap-1" key={field.name}>
@@ -38,7 +79,12 @@ function Login() {
                   </div>
                 ))}
               </div>
-
+              <Link
+                to={"forgot-password"}
+                className="self-end text-blue-400 text-xs sm:text-sm"
+              >
+                Forgot password?
+              </Link>
               <button
                 type="submit"
                 className="focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50 text-white font-semibold h-12 px-6 rounded-lg w-full flex items-center justify-center sm:w-auto bg-sky-400 highlight-white/20 hover:bg-sky-400 hover:font-bold mt-6"
@@ -46,7 +92,7 @@ function Login() {
                 Login
               </button>
             </form>
-            <div className="flex py-4 gap-2">
+            <div className="flex py-4 gap-2 text-xs sm:text-sm">
               <p>Don&apos;t have have an account? </p>
               <Link to={"/register"} className="text-blue-400">
                 Create one
@@ -54,7 +100,7 @@ function Login() {
             </div>
             <div className="capitalize flex items-center mt-6">
               <span className="w-[30%] h-[0.7px] bg-white md:w-full"></span>
-              <p className="capitalize bg-white text-black text-sm p-1 rounded-md md:w-full text-center">
+              <p className="capitalize bg-white text-black text-xs sm:text-sm p-1 rounded-md md:w-full text-center">
                 or continue with
               </p>
               <span className="w-[30%] h-[0.7px] bg-white md:w-full"></span>
@@ -91,11 +137,11 @@ function Login() {
                 </svg>
                 Google
               </button>
-              <button
+              {/* <button
                 // removed hover:bg-[#a9d203] and border-[#a9d203]
                 className="gap-4 mt-6 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50 text-white font-semibold h-12 px-6 rounded-lg w-full flex items-center justify-center sm:w-auto border-solid border-2 highlight-white/20 border-sky-500 hover:bg-sky-400 md:w-full"
               >
-                {/* <svg
+                <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 507.83 470.86"
                   width="24"
@@ -222,9 +268,9 @@ function Login() {
                     className="g"
                     points="284.32 257.1 290.88 142.41 321.1 60.72 186.93 60.72 216.75 142.41 223.7 257.1 226.09 293.27 226.29 382.31 281.34 382.31 281.74 293.27 284.32 257.1"
                   />
-                </svg> */}
+                </svg>
                 Apple
-              </button>
+              </button> */}
             </div>
           </div>
         </div>

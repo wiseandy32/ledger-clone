@@ -50,10 +50,10 @@ export const registrationFormField = [
 
 export const loginFormFields = [
   {
-    name: "username",
-    label: "username",
-    placeholder: "Enter your username",
-    type: "text",
+    name: "email",
+    label: "email",
+    placeholder: "Enter your email address",
+    type: "email",
   },
   {
     name: "password",

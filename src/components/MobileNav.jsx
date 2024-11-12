@@ -10,7 +10,7 @@ function MobileNav() {
   return (
     <>
       <div
-        className="absolute top-[28px] right-[-10px] grid items-center w-12 h-12 text-white z-[9999999] md:hidden"
+        className="absolute top-[28px] right-[-14px] grid items-center w-12 h-12 text-white z-[9999999] md:hidden"
         onClick={() => setIsMenuVisible((prev) => !prev)}
       >
         {!isMenuVisible ? (
