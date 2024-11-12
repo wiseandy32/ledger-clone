@@ -28,7 +28,7 @@ function Dashboard() {
         // style={{ border: "2px solid yellow" }}
       >
         <div
-          className="p-2 mb-3 max-w-[1200px] md:m-auto md:p-5 mt-20 md:mt-[5.5rem]"
+          className="p-2 mb-3 max-w-[1200px] md:m-auto md:p-5 mt-20 md:mt-[5.5rem] flex flex-col gap-4"
           // style={{ backgroundColor: "#0B1120", border: "2px solid red" }}
         >
           <h1>Dashboard</h1>
@@ -36,13 +36,13 @@ function Dashboard() {
             Display name:{" "}
             <span className="capitalize">{user?.displayName}</span>
           </h2>
+          <button
+            onClick={async () => await logout()}
+            className="focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50 text-white font-semibold h-12 px-6 rounded-lg w-full flex items-center justify-center sm:w-auto bg-sky-500 highlight-white/20 hover:bg-sky-400 md:w-[fit-content]"
+          >
+            Sign out
+          </button>
         </div>
-        <button
-          onClick={async () => await logout()}
-          className="focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50 text-white font-semibold h-12 px-6 rounded-lg w-full flex items-center justify-center sm:w-auto bg-sky-500 highlight-white/20 hover:bg-sky-400"
-        >
-          Sign out
-        </button>
       </div>
     </section>
   );

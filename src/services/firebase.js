@@ -8,12 +8,12 @@ import { getFirestore } from "firebase/firestore";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyCoGRp53axNiD5ImlQaZTQh1L68tPjlFWA",
-  authDomain: "ledger-d2e3d.firebaseapp.com",
-  projectId: "ledger-d2e3d",
-  storageBucket: "ledger-d2e3d.firebasestorage.app",
-  messagingSenderId: "610950432413",
-  appId: "1:610950432413:web:0f11bbf095a4cf12adb674",
+  apiKey: import.meta.env.VITE_FIREBASE_APP_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_APP_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_APP_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_APP_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_APP_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
 // Initialize Firebase
