@@ -3,9 +3,27 @@ import { GiHamburgerMenu } from "react-icons/gi";
 import { ImCross } from "react-icons/im";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useAuth } from "../context/auth/use-auth";
+import { useNavigate } from "react-router-dom";
+import { signOut } from "firebase/auth";
+import { auth } from "../services/firebase";
 
 function MobileNav() {
+  const { user, setUser } = useAuth();
   const [isMenuVisible, setIsMenuVisible] = useState(false);
+  const navigate = useNavigate();
+
+  const logout = async () => {
+    try {
+      await signOut(auth);
+      localStorage.clear();
+      setUser("");
+      setIsMenuVisible(false);
+      navigate("/");
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <>
@@ -39,35 +57,49 @@ function MobileNav() {
       >
         <ul className="flex flex-col md:flex-row justify-center md:w-auto w-full items-center gap-4">
           {[
-            { title: "home", path: "#home" },
-            { title: "about", path: "#about" },
-            { title: "services", path: "contact" },
+            { title: "home", path: "/" },
+            { title: "about", path: "/" },
+            { title: "services", path: "/" },
           ].map((link) => (
-            <li
+            <Link
+              to={link.path}
               key={link.title}
               className="hover:text-sky-400 text-2xl md:text-sm font-semibold"
             >
-              <a href={link.path}>{link.title}</a>
-            </li>
+              <li onClick={() => setIsMenuVisible(false)}>{link.title}</li>
+            </Link>
           ))}
         </ul>
         <div className="flex items-center flex-col md:flex-row px-5 md:px-0 gap-4 w-full md:w-auto md:border-l-2 md:border-slate-200 md:border-solid md:ml-6 md:pl-6 ">
-          {[
-            { title: "sign up", path: "register" },
-            { title: "login", path: "login" },
-          ].map((link) => (
-            <Link
-              key={link.title}
-              className={`focus:outline-none ${
-                link.path === "register"
-                  ? "bg-sky-500 hover:bg-sky-400 md:bg-transparent md:hover:bg-transparent md:hover:text-sky-400"
-                  : "border-solid border-2 border-sky-500 hover:bg-sky-400 md:border-none md:hover:bg-transparent md:hover:text-sky-400"
-              } focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50 text-white font-semibold h-12 px-6 md:px-0 rounded-lg w-full flex items-center justify-center sm:w-auto`}
-              to="register"
+          {!user ? (
+            <>
+              {[
+                { title: "sign up", path: "register" },
+                { title: "login", path: "login" },
+              ].map((link) => (
+                <Link
+                  key={link.title}
+                  className={`focus:outline-none ${
+                    link.path === "register"
+                      ? "bg-sky-500 hover:bg-sky-400 md:bg-transparent md:hover:bg-transparent md:hover:text-sky-400"
+                      : "border-solid border-2 border-sky-500 hover:bg-sky-400 md:border-none md:hover:bg-transparent md:hover:text-sky-400"
+                  } focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50 text-white font-semibold h-12 px-6 md:px-0 rounded-lg w-full flex items-center justify-center sm:w-auto`}
+                  to={link.path}
+                >
+                  <span onClick={() => setIsMenuVisible(false)}>
+                    {link.title}
+                  </span>
+                </Link>
+              ))}
+            </>
+          ) : (
+            <button
+              onClick={logout}
+              className="focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50 text-white font-semibold h-12 px-6 rounded-lg w-full flex items-center justify-center sm:w-auto bg-sky-500 highlight-white/20 hover:bg-sky-400"
             >
-              {link.title}
-            </Link>
-          ))}
+              Sign out
+            </button>
+          )}
         </div>
       </motion.nav>
     </>
