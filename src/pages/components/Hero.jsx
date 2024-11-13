@@ -33,7 +33,8 @@ function Hero() {
           <h1 className="h mt-[40px] md:mt-0 py-5 pt-10 md:pt-0 capitalize font-extrabold text-3xl md:text-4xl sm:text-5xl lg:text-6xl tracking-tight text-left md:text-center text-white md:py-10">
             secure your financial future with quantum financial system.
           </h1>
-          <p className="p mt-[40px] md:mt-6 md:text-lg text-left md:text-center max-w-3xl text-sm mx-auto text-slate-300">
+          {/* removed p */}
+          <p className="mt-[40px] md:mt-6 md:text-lg text-left md:text-center max-w-3xl text-sm mx-auto text-white">
             qfswrdledger Ledger stands as the world&apos;s most secure ledger
             and a decentralized digital banking system. It&apos;s specially
             crafted by the Quantum Financial System in collaboration with
