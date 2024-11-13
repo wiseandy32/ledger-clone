@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
-import Slide from "../components/Slide";
-import logo from "../assets/logo.webp";
+import Slide from "../pages/components/Slide";
+import logo from "../assets/logo.png";
 
 function Footer() {
   return (
-    <footer className="pt-20 mb-20 sm:pt-32 sm:mb-32 md:pt-20 md:mb-5 sm:px-10">
+    <footer className="pt-20 mb-20 sm:pt-32 sm:mb-32 md:pt-20 md:mb-5 sm:px-10 text-white">
       <div className="sm:mt-0 flex flex-col-reverse sm:flex-row justify-between gap-16 sm:gap-0">
         <div
           className="flex flex-col sm:flex-row justify-between gap-y-4 sm:gap-y-10 w-full px-5 sm:px-0"
@@ -33,7 +33,7 @@ function Footer() {
                 // { title: "privacy policy", path: "/" },
               ].map((link, index) => (
                 <Slide
-                  key={link}
+                  key={link.title}
                   yAxis={90}
                   delay={index === 0 ? 0.2 : 0.2 * index}
                 >
@@ -53,7 +53,7 @@ function Footer() {
                 { title: "legal", path: "/" },
               ].map((link, index) => (
                 <Slide
-                  key={link}
+                  key={link.path}
                   yAxis={90}
                   delay={index === 0 ? 0.2 : 0.2 * index}
                 >
