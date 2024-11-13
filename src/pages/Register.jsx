@@ -11,7 +11,7 @@ import {
   signOut,
 } from "firebase/auth";
 import { auth } from "../services/firebase";
-import MessageCard from "../components/MessageCard";
+import MessageCard from "./components/MessageCard";
 
 function Register() {
   const [error, setError] = useState("");
@@ -74,7 +74,7 @@ function Register() {
             <div className="hidden md:block w-[45%]">
               <img
                 className="w-full h-full"
-                // src="../assets/registration-image.webp"
+                // src="../../../assets/registration-image.webp"
                 src={registrationImage}
                 alt=""
               />

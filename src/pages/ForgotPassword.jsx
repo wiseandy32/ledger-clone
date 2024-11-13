@@ -4,7 +4,7 @@ import {
   fetchSignInMethodsForEmail,
   sendPasswordResetEmail,
 } from "firebase/auth";
-import MessageCard from "../components/MessageCard";
+import MessageCard from "./components/MessageCard";
 
 function ForgotPassword() {
   const [isResetLinkSent, setIsResetLinkSent] = useState(false);

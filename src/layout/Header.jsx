@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
-import MobileNav from "../components/MobileNav";
-import logo from "../assets/logo.webp";
+import MobileNav from "../pages/components/MobileNav";
+import logo from "../assets/logo.png";
 import { useAuth } from "../context/auth/use-auth";
 
 function Header() {
