@@ -327,3 +327,7 @@ footer {
   bottom: 26px;
   right: 0;
 }
+
+.tradingview-widget-copyright {
+  display: none !important;
+}

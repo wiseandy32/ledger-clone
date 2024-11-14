@@ -35,6 +35,9 @@ dependencies:
   react-router-dom:
     specifier: ^6.28.0
     version: 6.28.0(react-dom@18.3.1)(react@18.3.1)
+  react-ts-tradingview-widgets:
+    specifier: ^1.2.5
+    version: 1.2.5(react-dom@18.3.1)(react@18.3.1)
   tailwind-merge:
     specifier: ^2.5.4
     version: 2.5.4
@@ -3294,6 +3297,16 @@ packages:
     dependencies:
       '@remix-run/router': 1.21.0
       react: 18.3.1
+    dev: false
+
+  /react-ts-tradingview-widgets@1.2.5(react-dom@18.3.1)(react@18.3.1):
+    resolution: {integrity: sha512-eVnY0vjNDMRp4tgFn5ksjXPnnBohwUMylD7+xI7KoLnL6jOa3gR0EpLBsbRFlY/C/bLonH8VlSl4L543OM9law==}
+    peerDependencies:
+      react: ^17.0.2 || ^18.1.0
+      react-dom: ^17.0.2 || ^18.1.0
+    dependencies:
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
     dev: false
 
   /react@18.3.1:

@@ -4,6 +4,7 @@ import chart from "@/assets/chart.png";
 import { IoIosThunderstorm } from "react-icons/io";
 import { FaHandHoldingDollar } from "react-icons/fa6";
 import { MdOutlineSupportAgent } from "react-icons/md";
+import { CryptoCurrencyMarket } from "react-ts-tradingview-widgets";
 
 function OurServices() {
   return (
@@ -57,7 +58,7 @@ function OurServices() {
               // style={{ border: "2px solid blue" }}
             >
               {/*  className="bg-green-700 max-w-[95%] overflow-scroll" */}
-              <TabsList className="text-white bg-slate-800 max-w-full w-full overflow-scroll md:overflow-hidden pl-[8rem] xxs:pl-[6rem] xs:pl-0 sm:pl-[10.5rem] ">
+              <TabsList className="text-white bg-slate-800 max-w-full w-full overflow-scroll md:overflow-hidden pl-[8rem] xxs:pl-[6rem] xs:pl-0 sm:pl-[10.5rem] lg:pl-0">
                 <TabsTrigger value="free" className="capitalize">
                   Free trial accounts
                 </TabsTrigger>
@@ -133,8 +134,12 @@ function OurServices() {
                 accessiblefas with our client accross the globe.
               </TabsContent>
             </Tabs>
-            <div>
-              <img src={chart} alt="" />
+            <div className="w-full">
+              <CryptoCurrencyMarket
+                colorTheme="dark"
+                width="100%"
+              ></CryptoCurrencyMarket>
+              {/* <img src={chart} alt="" /> */}
             </div>
           </Slide>
           <div
