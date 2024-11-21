@@ -40,7 +40,7 @@ function GateWay() {
     <>
       <div>
         <h1 className="text-2xl md:text-4xl font-bold capitalize">
-          {data.type} Gateway
+          {data.type} {data?.extra} Gateway
         </h1>
         <p>
           Scan the QR code or copy the {data.type} address to make your deposit
@@ -52,14 +52,16 @@ function GateWay() {
       >
         <div className="flex gap-1">
           <img src={data.icon} alt="" width={25} />
-          <p className="uppercase font-semibold">{data.type}</p>
+          <p className="uppercase font-semibold">
+            {data.type} {data?.extra}
+          </p>
         </div>
         <div className="grid place-content-center">
           <img src={data.qrCode} alt="" width={330} />
         </div>
         <div className="grid w-full items-center gap-1.5 relative">
           <Label htmlFor="walletAddress" className="capitalize">
-            {data.type} Address
+            {data.type} {data?.extra} Address
           </Label>
           <Input
             type="text"

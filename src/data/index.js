@@ -194,12 +194,13 @@ export const paymentGateways = [
   },
   {
     type: "usdt",
+    extra: "(TRC20)",
     qrCode: usdtQRCode,
     icon: usdtIcon,
     walletAddress: "TRtxynBmL4fyg7Qa7nJvaEFsVobVysk9PB",
   },
   {
-    type: "dogecoin",
+    type: "doge",
     qrCode: dogeQRCode,
     icon: dogeIcon,
     walletAddress: "DLFyTv52jgjptxXxzwaDwUQUYAZ72vZjKE",
