@@ -1,50 +1,81 @@
+/* eslint-disable react/prop-types */
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import { Separator } from "@/components/ui/separator";
+import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/auth/use-auth";
-import { signOut } from "firebase/auth";
-import { auth } from "../services/firebase";
+// import ModeToggle from "@/components/theme-toggle";
+import { useLocation } from "react-router-dom";
 
-function Dashboard() {
-  const { user, setUser } = useAuth();
+function Dashboard({ children }) {
+  const { pathname } = useLocation();
   const navigate = useNavigate();
-
-  const logout = async () => {
-    try {
-      await signOut(auth);
-      localStorage.clear();
-      setUser("");
-      navigate("/");
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  const paths = pathname.split("/").filter((item) => item !== "");
 
   return (
-    <section
-      className="h-[135vh] mb-[10vh] bg-bottom bg-no-repeat bg-[#0B1120] bottom-10 inset-0  sm:h-[100dvh] md:h-[105dvh] relative"
-      // style={{ border: "2px solid green" }}
-    >
-      <div
-        className="mt-[5vh] md:mt-[12vh] md:pt-[6vh] px-5 absolute inset-0 h-[135vh] w-full bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:16px_16px] md:h-full"
-        // style={{ border: "2px solid yellow" }}
-      >
-        <div
-          className="p-2 mb-3 max-w-[1200px] md:m-auto md:p-5 mt-20 md:mt-[5.5rem] flex flex-col gap-4"
-          // style={{ backgroundColor: "#0B1120", border: "2px solid red" }}
-        >
-          <h1>Dashboard</h1>
-          <h2>
-            Display name:{" "}
-            <span className="capitalize">{user?.displayName}</span>
-          </h2>
-          <button
-            onClick={async () => await logout()}
-            className="focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50 text-white font-semibold h-12 px-6 rounded-lg w-full flex items-center justify-center sm:w-auto bg-sky-500 highlight-white/20 hover:bg-sky-400 md:w-[fit-content]"
-          >
-            Sign out
-          </button>
+    <>
+      <SidebarInset>
+        <header className="mb-2 w-[97.5%] justify-between flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12 border-solid border-b-2 border-slate-600/50">
+          <div className="flex items-center gap-2 px-4">
+            <SidebarTrigger className="-ml-1" />
+            <Separator orientation="vertical" className="mr-2 h-4" />
+            <Breadcrumb>
+              <BreadcrumbList>
+                {paths.map((path, index) => {
+                  return (
+                    <>
+                      <BreadcrumbItem className="capitalize" key={path}>
+                        {index + 1 > paths.length - 1 ? (
+                          <BreadcrumbPage>
+                            {!paths[1] ? "Dashboard" : path}
+                          </BreadcrumbPage>
+                        ) : (
+                          <BreadcrumbLink
+                            className="cursor-pointer"
+                            onClick={() => {
+                              navigate(
+                                +`-${
+                                  index === 0
+                                    ? paths.length - 1
+                                    : paths.length - (index + 1)
+                                }`
+                              );
+                            }}
+                          >
+                            {!paths[1] ? "Dashboard" : path}
+                          </BreadcrumbLink>
+                        )}
+                      </BreadcrumbItem>
+                      {index + 1 > paths.length - 1 ? null : (
+                        <BreadcrumbSeparator />
+                      )}
+                    </>
+                  );
+                })}
+              </BreadcrumbList>
+            </Breadcrumb>
+          </div>
+          {/* <div className="justify-self-end">
+            <ModeToggle />
+          </div> */}
+        </header>
+        <div className="flex flex-1 flex-col gap-4 p-4 pt-0 md:w-[98.5%]">
+          {/* <div className="grid auto-rows-min gap-4 md:grid-cols-3">
+            <div className="aspect-video rounded-xl bg-muted/50" />
+            <div className="aspect-video rounded-xl bg-muted/50" />
+            <div className="aspect-video rounded-xl bg-muted/50" />
+          </div>
+          <div className="min-h-[100vh] flex-1 rounded-xl bg-muted/50 md:min-h-min" /> */}
+          {children}
         </div>
-      </div>
-    </section>
+      </SidebarInset>
+    </> // </section>
   );
 }
 

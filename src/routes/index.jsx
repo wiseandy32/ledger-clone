@@ -4,15 +4,23 @@ import Landing from "../pages/Landing";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
 import ProtectedRoutes from "./ProtectedRoutes";
-import Dashboard from "../pages/Dashboard";
 import AuthProvider from "../context/auth/AuthProvider";
 import { redirect } from "react-router-dom";
 import ForgotPassword from "../pages/ForgotPassword";
+import NotFoundError from "@/pages/NotFound";
+import DashboardLayout from "@/layout/dashboard/DashboardLayout";
+import UserProfile from "@/pages/UserProfile";
+import UserDashboard from "@/pages/UserDashboard";
+import Deposit from "@/pages/Deposit";
+import Withdrawal from "@/pages/Withdrawal";
+import GateWay from "@/pages/GateWay";
+import { paymentGateways } from "@/data";
 
 const router = createBrowserRouter(
   [
     {
       path: "/",
+      errorElement: <NotFoundError />,
       element: (
         <AuthProvider>
           <Layout />
@@ -45,14 +53,52 @@ const router = createBrowserRouter(
           path: "login/forgot-password",
           element: <ForgotPassword />,
         },
+      ],
+    },
+    {
+      path: "user",
+      // loader: () => {
+      //   return redirect("/user/dashboard");
+      // },
+      errorElement: <NotFoundError />,
+      element: (
+        <AuthProvider>
+          <ProtectedRoutes>
+            <DashboardLayout />
+          </ProtectedRoutes>
+        </AuthProvider>
+      ),
+      children: [
         {
-          element: <ProtectedRoutes />,
-          children: [
-            {
-              path: "dashboard",
-              element: <Dashboard />,
-            },
-          ],
+          index: true,
+          element: <UserDashboard />,
+        },
+        {
+          path: "profile",
+          element: <UserProfile />,
+        },
+        {
+          path: "deposit",
+          element: <Deposit />,
+        },
+        {
+          path: "withdraw",
+          element: <Withdrawal />,
+        },
+        {
+          path: "deposit/:gateway",
+          loader: ({ params }) => {
+            const [data] = paymentGateways.filter(
+              (gateway) => gateway.type === params.gateway
+            );
+
+            if (!data) {
+              return null;
+            }
+
+            return data;
+          },
+          element: <GateWay />,
         },
       ],
     },

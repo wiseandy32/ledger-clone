@@ -2,21 +2,24 @@ import { Link } from "react-router-dom";
 import { registrationFormField } from "../data";
 import { useState } from "react";
 import registrationImage from "../assets/registration-image.webp";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import { addDataToDb, createUser, updateUserProfile } from "../utils/auth";
 import {
-  GoogleAuthProvider,
+  // GoogleAuthProvider,
   sendEmailVerification,
-  signInWithPopup,
+  // signInWithPopup,
   signOut,
 } from "firebase/auth";
 import { auth } from "../services/firebase";
 import MessageCard from "./components/MessageCard";
+import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react";
 
 function Register() {
   const [error, setError] = useState("");
   const [isVerificationLinkSent, setIsVerificationLinkSent] = useState("");
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -29,6 +32,7 @@ function Register() {
     };
 
     try {
+      setIsSubmitting(true);
       // create a new user
       await createUser(
         formData.get("email"),
@@ -37,10 +41,11 @@ function Register() {
       );
       // update user displayName
       await updateUserProfile({
-        displayName: `${userInfo.username}`,
+        displayName: `${userInfo.firstName} ${userInfo.lastName}`,
       });
       // save user details to db
-      await addDataToDb("users", userInfo);
+      const uid = auth?.currentUser?.uid;
+      await addDataToDb("users", { uid, ...userInfo });
       await sendEmailVerification(auth.currentUser);
 
       // sign the user out
@@ -50,18 +55,19 @@ function Register() {
     } catch (error) {
       console.error(error);
     }
+    setIsSubmitting(false);
   };
 
-  const loginWithGoogle = async () => {
-    const provider = new GoogleAuthProvider();
-    provider.setCustomParameters({ prompt: "select_account" });
-    try {
-      await signInWithPopup(auth, provider);
-      navigate("/dashboard");
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  // const loginWithGoogle = async () => {
+  //   const provider = new GoogleAuthProvider();
+  //   provider.setCustomParameters({ prompt: "select_account" });
+  //   try {
+  //     await signInWithPopup(auth, provider);
+  //     navigate("/dashboard");
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
 
   return (
     <section className="h-[120vh] mb-[10vh] bg-bottom bg-no-repeat bg-[#0B1120] bottom-10 inset-0  sm:h-[100dvh] md:h-[125dvh] relative">
@@ -146,12 +152,16 @@ function Register() {
                     I accept the terms and privacy policy
                   </label>
                 </div>
-                <button
+                <Button
+                  variant="gooeyLeft"
                   type="submit"
-                  className="focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50 text-white font-semibold h-12 px-6 rounded-lg w-full flex items-center justify-center sm:w-auto bg-sky-400 highlight-white/20 hover:bg-sky-400 hover:font-bold mt-6"
+                  disabled={isSubmitting}
                 >
-                  Register
-                </button>
+                  {!isSubmitting ? null : (
+                    <Loader2 className="animate-spin mr-2" />
+                  )}
+                  {!isSubmitting ? "Login" : "Signing in"}
+                </Button>
               </form>
               <div className="flex py-4 gap-2">
                 <p>Already have an account? </p>
@@ -159,15 +169,15 @@ function Register() {
                   Login
                 </Link>
               </div>
-              <div className="capitalize flex items-center mt-6">
+              {/* <div className="capitalize flex items-center mt-6">
                 <span className="w-[30%] h-[0.7px] bg-white md:w-full"></span>
                 <p className="capitalize bg-white text-black text-sm p-1 rounded-md md:w-full text-center">
                   or continue with
                 </p>
                 <span className="w-[30%] h-[0.7px] bg-white md:w-full"></span>
-              </div>
+              </div> */}
 
-              <div className="md:flex justify-center gap-4">
+              {/* <div className="md:flex justify-center gap-4">
                 <button
                   onClick={loginWithGoogle}
                   className="mt-6 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50 text-white font-semibold h-12 px-6 rounded-lg w-full flex items-center justify-center sm:w-auto border-solid border-2 highlight-white/20  border-sky-500 hover:bg-sky-400 gap-4 md:w-full"
@@ -201,7 +211,7 @@ function Register() {
                   </svg>
                   Google
                 </button>
-              </div>
+              </div> */}
             </div>
           </div>
         ) : (
