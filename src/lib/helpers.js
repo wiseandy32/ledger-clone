@@ -103,3 +103,8 @@ export const handleFileSelect = async (file) => {
     console.error("Error updating profile photo:", error.message);
   }
 };
+
+export const updateFirebaseDb = async (documentPath, docId, data) => {
+  const docRef = doc(db, documentPath, docId);
+  await updateDoc(docRef, data);
+};

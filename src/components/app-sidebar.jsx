@@ -22,6 +22,7 @@ import logo from "@/assets/logo.png";
 import { LayoutGrid } from "lucide-react";
 import { Download } from "lucide-react";
 import { Link } from "lucide-react";
+import { useLocation } from "react-router-dom";
 // This is sample data.
 const data = {
   teams: [
@@ -63,6 +64,23 @@ const data = {
     //   icon: Link,
     // },
   ],
+  adminMain: [
+    {
+      title: "Users",
+      url: "/admin",
+      icon: LayoutGrid,
+    },
+    {
+      title: "Deposit Request",
+      url: "deposits",
+      icon: Download,
+    },
+    {
+      title: "Withdrawals",
+      url: "withdrawals",
+      icon: GrUploadOption,
+    },
+  ],
   projects: [
     {
       name: "Design Engineering",
@@ -83,6 +101,8 @@ const data = {
 };
 
 export function AppSidebar({ ...props }) {
+  const { pathname } = useLocation();
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -90,7 +110,9 @@ export function AppSidebar({ ...props }) {
         {/* <TeamSwitcher teams={data.teams} /> */}
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        <NavMain
+          items={pathname.includes("admin") ? data.adminMain : data.navMain}
+        />
         {/* <NavProjects projects={data.projects} /> */}
       </SidebarContent>
       <SidebarFooter>

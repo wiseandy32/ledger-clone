@@ -26,12 +26,6 @@ function Register() {
     e.preventDefault();
     const formData = new FormData(e.target);
 
-    const userInfo = {
-      firstName: formData.get("firstName"),
-      lastName: formData.get("lastName"),
-      username: formData.get("username"),
-    };
-
     try {
       setIsSubmitting(true);
       // create a new user
@@ -42,17 +36,23 @@ function Register() {
       );
       // update user displayName
       await updateUserProfile({
-        displayName: `${userInfo.firstName} ${userInfo.lastName}`,
+        displayName: `${formData.get("firstName")} ${formData.get("lastName")}`,
       });
-      // save user details to db
-      const uid = auth?.currentUser?.uid;
-      await addDataToDb("users", { uid, ...userInfo });
-      await sendEmailVerification(auth.currentUser);
 
+      const uid = auth?.currentUser?.uid;
+      const user = {
+        name: `${formData.get("firstName")} ${formData.get("lastName")}`,
+        username: formData.get("username"),
+        email: formData.get("email"),
+        uid,
+      };
+      // save user details to db
+      await addDataToDb("users", user);
+      await sendEmailVerification(auth.currentUser);
+      // TODO: fix sign up not working
       // sign the user out
       await signOut(auth);
       setIsVerificationLinkSent(true);
-      console.log("Document written");
     } catch (error) {
       console.error(error);
     }
@@ -162,7 +162,7 @@ function Register() {
                   {!isSubmitting ? null : (
                     <Loader2 className="animate-spin mr-2" />
                   )}
-                  {!isSubmitting ? "Login" : "Signing in"}
+                  {!isSubmitting ? "Register" : "Creating your account"}
                 </Button>
               </form>
               <div className="flex py-4 gap-2">

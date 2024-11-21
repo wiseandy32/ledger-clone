@@ -10,7 +10,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import { useNavigate } from "react-router-dom";
-// import ModeToggle from "@/components/theme-toggle";
+import ModeToggle from "@/components/theme-toggle";
 import { useLocation } from "react-router-dom";
 
 function Dashboard({ children }) {
@@ -30,7 +30,10 @@ function Dashboard({ children }) {
                 {paths.map((path, index) => {
                   return (
                     <>
-                      <BreadcrumbItem className="capitalize" key={path}>
+                      <BreadcrumbItem
+                        className="capitalize text-xs md:text-base"
+                        key={path}
+                      >
                         {index + 1 > paths.length - 1 ? (
                           <BreadcrumbPage>
                             {!paths[1] ? "Dashboard" : path}
@@ -61,9 +64,9 @@ function Dashboard({ children }) {
               </BreadcrumbList>
             </Breadcrumb>
           </div>
-          {/* <div className="justify-self-end">
+          <div className="justify-self-end">
             <ModeToggle />
-          </div> */}
+          </div>
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0 md:w-[98.5%]">
           {/* <div className="grid auto-rows-min gap-4 md:grid-cols-3">

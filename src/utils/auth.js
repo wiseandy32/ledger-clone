@@ -1,4 +1,4 @@
-import { addDoc, collection } from "firebase/firestore";
+import { collection, doc, setDoc } from "firebase/firestore";
 import { auth, db } from "../services/firebase";
 import {
   createUserWithEmailAndPassword,
@@ -21,7 +21,17 @@ export const createUser = async (email, password, onError) => {
 
 export const addDataToDb = async (field, data) => {
   try {
-    const docRef = await addDoc(collection(db, field), data);
+    // const docRef = collection(db, field);
+
+    // console.log(docRef, data);
+    const docRef = doc(collection(db, field));
+    const updatedData = {
+      ...data,
+      docRef: docRef.id,
+    };
+    console.log(updatedData);
+    await setDoc(docRef, updatedData);
+    console.log(updatedData);
     return docRef;
   } catch (error) {
     console.error(error);
