@@ -9,6 +9,7 @@ import { useState } from "react";
 // import { loginWithGoogle } from "@/utils/auth";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
+import { Input } from "@/components/ui/input";
 
 function Login() {
   const [error, setError] = useState("");
@@ -71,13 +72,13 @@ function Login() {
                     <label htmlFor={field.name} className="capitalize">
                       {field.label}
                     </label>
-                    <input
+                    <Input
                       type={field.type}
                       placeholder={field?.placeholder}
                       required
                       id={field.name}
                       name={field.name}
-                      className="py-2 px-1 rounded-md"
+                      className="py-5"
                     />
                   </div>
                 ))}

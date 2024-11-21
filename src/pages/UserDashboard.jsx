@@ -7,7 +7,7 @@ function UserDashboard() {
   return (
     <>
       <div className="">
-        <h1 className=" text-md md:text-4xl font-bold">
+        <h1 className="text-2xl md:text-4xl font-bold">
           {/* <h1 className="text-4xl font-bold border-b-2 border-solid border-sidebar-border"> */}
           Welcome, {user?.displayName}
         </h1>

@@ -14,6 +14,7 @@ import { auth } from "../services/firebase";
 import MessageCard from "./components/MessageCard";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
+import { Input } from "@/components/ui/input";
 
 function Register() {
   const [error, setError] = useState("");
@@ -74,7 +75,7 @@ function Register() {
       <div className="mt-[12vh] md:pt-[6vh] px-5 absolute inset-0 h-[135vh] w-full bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:16px_16px] md:h-full">
         {!isVerificationLinkSent ? (
           <div
-            className="p-2 md:flex md:justify-between md:items-center max-w-[1200px] md:m-auto md:p-5"
+            className="md:flex md:justify-between md:items-center max-w-[1200px] md:m-auto md:p-5"
             style={{ backgroundColor: "#0B1120" }}
           >
             <div className="hidden md:block w-[45%]">
@@ -110,7 +111,7 @@ function Register() {
                       <label htmlFor={field.name} className="capitalize">
                         {field.label}
                       </label>
-                      <input
+                      <Input
                         type={field.type}
                         placeholder={field?.placeholder}
                         required
@@ -135,7 +136,7 @@ function Register() {
                                 }
                               }
                         }
-                        className="py-2 px-1 rounded-md"
+                        className="py-5"
                       />
                     </div>
                   ))}
@@ -149,7 +150,8 @@ function Register() {
                     required
                   />
                   <label htmlFor="hasAcceptedTerms" className="">
-                    I accept the terms and privacy policy
+                    I accept the <span className="text-blue-400">terms</span>{" "}
+                    and <span className="text-blue-400">privacy policy</span>
                   </label>
                 </div>
                 <Button
