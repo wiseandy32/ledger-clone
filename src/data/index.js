@@ -164,7 +164,7 @@ export const depositMethods = [
   { name: "XRP", icon: xrpIcon, path: "xrp" },
   { name: "XLM", icon: xlmIcon, path: "xlm" },
   { name: "USDT TRC20", icon: usdtIcon, path: "usdt" },
-  { name: "DOGEcoin", icon: dogeIcon, path: "doge" },
+  { name: "DOGEcoin", icon: dogeIcon, path: "dogecoin" },
 ];
 
 export const paymentGateways = [
@@ -200,7 +200,7 @@ export const paymentGateways = [
     walletAddress: "TRtxynBmL4fyg7Qa7nJvaEFsVobVysk9PB",
   },
   {
-    type: "doge",
+    type: "dogecoin",
     qrCode: dogeQRCode,
     icon: dogeIcon,
     walletAddress: "DLFyTv52jgjptxXxzwaDwUQUYAZ72vZjKE",
