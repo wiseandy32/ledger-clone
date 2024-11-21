@@ -1,6 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { auth } from "@/services/firebase";
+import { addDataToDb } from "@/utils/auth";
 import { Check } from "lucide-react";
 import { CopyIcon } from "lucide-react";
 import { useState } from "react";
@@ -30,10 +32,26 @@ function GateWay() {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsOpen(true);
-    setAmountDeposited("");
+    const formData = new FormData(e.target);
+    const depositRequestInfo = {
+      uid: auth.currentUser.uid,
+      coinType: data.type,
+      name: auth.currentUser.displayName,
+      amount: formData.get("depositAmount"),
+      email: auth.currentUser.email,
+      isConfirmed: false,
+    };
+
+    try {
+      const ref = await addDataToDb("depositRequests", depositRequestInfo);
+      console.log(ref.id);
+      setAmountDeposited("");
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -92,6 +110,7 @@ function GateWay() {
           <Input
             type="number"
             id="depositAmount"
+            name="depositAmount"
             placeholder="Enter the amount you sent"
             className="py-5"
             value={amountDeposited}

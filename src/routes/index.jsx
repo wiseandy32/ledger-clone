@@ -15,6 +15,9 @@ import Deposit from "@/pages/Deposit";
 import Withdrawal from "@/pages/Withdrawal";
 import GateWay from "@/pages/GateWay";
 import { paymentGateways } from "@/data";
+import DepositRequestsList from "@/pages/DepositRequestsList";
+import WithdrawalRequestsList from "@/pages/WithdrawalRequestsList";
+import UsersList from "@/pages/UsersList";
 
 const router = createBrowserRouter(
   [
@@ -57,9 +60,6 @@ const router = createBrowserRouter(
     },
     {
       path: "user",
-      // loader: () => {
-      //   return redirect("/user/dashboard");
-      // },
       errorElement: <NotFoundError />,
       element: (
         <AuthProvider>
@@ -99,6 +99,31 @@ const router = createBrowserRouter(
             return data;
           },
           element: <GateWay />,
+        },
+      ],
+    },
+    {
+      path: "admin",
+      errorElement: <NotFoundError />,
+      element: (
+        <AuthProvider>
+          <ProtectedRoutes>
+            <DashboardLayout />
+          </ProtectedRoutes>
+        </AuthProvider>
+      ),
+      children: [
+        {
+          index: true,
+          element: <UsersList />,
+        },
+        {
+          path: "Deposits",
+          element: <DepositRequestsList />,
+        },
+        {
+          path: "withdrawals",
+          element: <WithdrawalRequestsList />,
         },
       ],
     },

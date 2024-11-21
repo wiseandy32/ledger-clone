@@ -89,11 +89,15 @@ function Login() {
               >
                 Forgot password?
               </Link>
-              <Button variant="gooeyLeft" type="submit" disabled={isSubmitting}>
-                {!isSubmitting ? null : (
+              <Button
+                variant="gooeyLeft"
+                type="submit"
+                disabled={isSubmitting && !error}
+              >
+                {!isSubmitting || error ? null : (
                   <Loader2 className="animate-spin mr-2" />
                 )}
-                {!isSubmitting ? "Login" : "Signing in"}
+                {!isSubmitting || error ? "Login" : "Signing in"}
               </Button>
             </form>
             <div className="flex py-4 gap-2 text-xs sm:text-sm text-slate-50">

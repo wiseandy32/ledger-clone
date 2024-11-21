@@ -67,18 +67,19 @@ export const registrationFormField = [
     label: "Password",
     placeholder: "Enter a password",
     type: "password",
-    pattern:
-      "(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}",
-    title:
-      "Password must contain at least 8 characters, with at least one uppercase letter, one lowercase letter, one number, and one special character",
-    min: 8,
+    // pattern:
+    //   "(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}",
+    // title:
+    //   "Password must contain at least 8 characters, with at least one uppercase letter, one lowercase letter, one number, and one special character",
+    title: "Password must contain at least 4 characters",
+    min: 4,
   },
   {
     name: "confirmPassword",
     label: "confirm your password",
     placeholder: "Confirm your password",
     type: "password",
-    min: 8,
+    min: 4,
   },
 ];
 
@@ -210,66 +211,66 @@ export const paymentGateways = [
 export const withdrawalOptions = [
   {
     title: "XLM",
-    value: "xlm_balance",
+    value: "xlm",
   },
   {
     title: "XRP",
-    value: "xrp_balance",
+    value: "xrp",
   },
   {
     title: "Bitcoin",
-    value: "btc_balance",
+    value: "bitcoin",
   },
   {
     title: "USDT",
-    value: "usdt_balance",
+    value: "usdt",
   },
   {
     title: "Ethereum",
-    value: "eth_balance",
+    value: "ethereum",
   },
   {
     title: "Doge",
-    value: "doge_balance",
+    value: "dogecoin",
   },
   {
     title: "Litecoin",
-    value: "ltc_balance",
+    value: "litecoin",
   },
   {
     title: "ALGORAND",
-    value: "algo_balance",
+    value: "algorand",
   },
   {
     title: "SOLANA",
-    value: "sol_balance",
+    value: "solana",
   },
   {
     title: "BNB",
-    value: "bnb_balance",
+    value: "bnb",
   },
   {
     title: "QTUM",
-    value: "qtum_balance",
+    value: "qtum",
   },
   {
     title: "TEZOS (XTZ)",
-    value: "tezos_balance",
+    value: "tezos",
   },
   {
     title: "THETA",
-    value: "theta_balance",
+    value: "theta",
   },
   {
     title: "FILECOIN",
-    value: "filecoin_balance",
+    value: "filecoin",
   },
   {
     title: "NANO",
-    value: "nano_balance",
+    value: "nano",
   },
   {
     title: "SHIBA",
-    value: "shiba_balance",
+    value: "shiba",
   },
 ];
