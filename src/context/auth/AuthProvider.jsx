@@ -5,31 +5,28 @@ import { AuthContext } from "./use-auth";
 import { useEffect } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../services/firebase";
+import { useQuery } from "@tanstack/react-query";
+import { fetchUserByID } from "@/lib/helpers";
 
 function AuthProvider({ children }) {
-  const [user, setUser] = useState(
-    JSON.parse(localStorage.getItem("id")) || ""
-  );
-
-  console.log(user);
+  const [uid, setUid] = useState(JSON.parse(localStorage.getItem("id")) || "");
+  // const [user, setUser] = useState({});
+  const { data: user } = useQuery({
+    queryKey: ["user", uid],
+    queryFn: () => fetchUserByID(uid),
+    enabled: !!uid,
+  });
 
   const values = {
     user,
-    setUser,
+    uid,
   };
+  // console.log("auth: ", user);
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        setUser("");
-        console.log("first");
-      } else {
-        // const uid = user.uid;
-        localStorage.setItem("id", JSON.stringify(user?.uid));
-        setUser(user);
-
-        console.log("second");
-      }
+      localStorage.setItem("id", JSON.stringify(user?.uid || ""));
+      setUid(user?.uid);
     });
   }, [user]);
 
