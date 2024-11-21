@@ -61,7 +61,7 @@ function GateWay() {
         </div>
         <div className="grid w-full items-center gap-1.5 relative">
           <Label htmlFor="walletAddress" className="capitalize">
-            {data.type} {data?.extra} Address
+            {data.type} Address
           </Label>
           <Input
             type="text"
@@ -73,12 +73,17 @@ function GateWay() {
             className="py-5"
           />
           <Button
-            className="w-fit absolute right-1 top-[50%] translate-y-[-22%]"
+            className="w-fit absolute right-1 top-[25%] "
             onClick={handleCopy}
             type="button"
           >
             <CopyIcon className="mr-2" /> Copy Address
           </Button>
+          {data?.extra && (
+            <p className="text-xs">
+              Network type: <span className="text-white">{data?.extra}</span>
+            </p>
+          )}
         </div>
         <div className="grid w-full items-center gap-1.5 mt-7">
           <Label htmlFor="depositAmount" className="capitalize">
@@ -93,7 +98,7 @@ function GateWay() {
             onChange={(e) => setAmountDeposited(e.target.value)}
             required
           />
-          <Button className="mt-2" type="submit" variant="ringHover">
+          <Button className="mt-2" type="submit" variant="gooeyLeft">
             Submit
           </Button>
         </div>
