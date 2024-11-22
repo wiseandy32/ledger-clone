@@ -117,8 +117,8 @@ export const updateFirebaseDb = async (documentPath, docId, data) => {
 };
 
 export const capitalizeFirstLettersOfName = (word = "john doe") => {
-  return word
-    .split(" ")
+  return word?
+    .split(" ")?
     .reduce((prev, curr) => prev + curr[0].toUpperCase(), "");
 };
 

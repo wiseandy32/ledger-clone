@@ -18,6 +18,7 @@ function AuthProvider({ children }) {
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
+      localStorage.removeItem("id");
       localStorage.setItem("id", JSON.stringify(user?.uid || ""));
       setUid(user?.uid);
     });
