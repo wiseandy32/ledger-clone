@@ -17,13 +17,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { updateFirebaseDb } from "@/lib/helpers";
+import { handleRequestApproval } from "@/lib/helpers";
 import { db } from "@/services/firebase";
 import { collection, onSnapshot } from "firebase/firestore";
 import { MoreHorizontal } from "lucide-react";
 import { useState } from "react";
 import { useEffect } from "react";
-import { toast } from "sonner";
 
 function DepositRequestsList() {
   const [docs, setDocs] = useState([]);
@@ -95,44 +94,13 @@ function DepositRequestsList() {
                       <DropdownMenuLabel>Actions</DropdownMenuLabel>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem
-                        onClick={() => {
-                          if (!doc.isConfirmed) {
-                            updateFirebaseDb("depositRequests", doc.docRef, {
-                              isConfirmed: true,
-                            });
-                            toast.success(
-                              `You have approved ${doc?.name} deposit`
-                            );
-                          } else {
-                            toast.info(
-                              `Are you sure you want to rescind ${doc.name} deposit request status?`,
-                              {
-                                duration: Infinity,
-                                cancel: {
-                                  label: "Cancel",
-                                  onClick: () => {
-                                    return;
-                                  },
-                                },
-                                action: {
-                                  label: "Confirm",
-                                  onClick: () => {
-                                    updateFirebaseDb(
-                                      "depositRequests",
-                                      doc.docRef,
-                                      {
-                                        isConfirmed: false,
-                                      }
-                                    );
-                                    toast.success(
-                                      `${doc.name} deposit request has been rescinded`
-                                    );
-                                  },
-                                },
-                              }
-                            );
-                          }
-                        }}
+                        onClick={() =>
+                          handleRequestApproval(
+                            doc,
+                            "deposit",
+                            "depositRequests"
+                          )
+                        }
                       >
                         {!doc.isConfirmed
                           ? "Approve Request"

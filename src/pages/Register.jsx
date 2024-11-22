@@ -45,7 +45,6 @@ function Register() {
         username: formData.get("username"),
         email: auth.currentUser.email,
         uid,
-        isDisabled: false,
         isDeleted: false,
         isAdmin: false,
       };

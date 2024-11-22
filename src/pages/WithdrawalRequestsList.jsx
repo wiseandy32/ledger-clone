@@ -17,13 +17,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { updateFirebaseDb } from "@/lib/helpers";
+import { handleRequestApproval } from "@/lib/helpers";
 import { db } from "@/services/firebase";
 import { collection, onSnapshot } from "firebase/firestore";
 import { MoreHorizontalIcon } from "lucide-react";
 import { useState } from "react";
 import { useEffect } from "react";
-import { toast } from "sonner";
 
 function WithdrawalRequestsList() {
   const [docs, setDocs] = useState([]);
@@ -103,44 +102,13 @@ function WithdrawalRequestsList() {
                       <DropdownMenuLabel>Actions</DropdownMenuLabel>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem
-                        onClick={() => {
-                          if (doc.isConfirmed) {
-                            updateFirebaseDb("withdrawalRequests", doc.docRef, {
-                              isConfirmed: false,
-                            });
-                            toast.success(
-                              `You have rescinded ${doc.name} withdrawal request status`
-                            );
-                          } else {
-                            toast.info(
-                              `Do you want to approve ${doc?.name} withdrawal request`,
-                              {
-                                duration: Infinity,
-                                cancel: {
-                                  label: "No",
-                                  onClick: () => {
-                                    return;
-                                  },
-                                },
-                                action: {
-                                  label: "Yes",
-                                  onClick: () => {
-                                    updateFirebaseDb(
-                                      "withdrawalRequests",
-                                      doc.docRef,
-                                      {
-                                        isConfirmed: true,
-                                      }
-                                    );
-                                    toast.success(
-                                      `${doc.name} withdrawal request has been rescinded`
-                                    );
-                                  },
-                                },
-                              }
-                            );
-                          }
-                        }}
+                        onClick={() =>
+                          handleRequestApproval(
+                            doc,
+                            "withdrawal",
+                            "withdrawalRequests"
+                          )
+                        }
                       >
                         {!doc.isConfirmed
                           ? "Approve Request"
