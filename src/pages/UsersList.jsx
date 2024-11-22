@@ -139,46 +139,11 @@ function UsersList() {
                       >
                         {!user.isAdmin ? "Make" : "Remove as"} admin
                       </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => {
-                          if (!user.isDisabled) {
-                            toast.info(
-                              `Are you sure? ${user.name} will not be able to login again`,
-                              {
-                                duration: Infinity,
-                                cancel: {
-                                  label: "Cancel",
-                                  onClick: () => {
-                                    return;
-                                  },
-                                },
-                                action: {
-                                  label: "Confirm",
-                                  onClick: () => {
-                                    updateFirebaseDb("users", user.docRef, {
-                                      isDisabled: !user.isDisabled,
-                                    });
-                                    toast.success(
-                                      `${user.name} is now active!`
-                                    );
-                                  },
-                                },
-                              }
-                            );
-                          } else {
-                            updateFirebaseDb("users", user.docRef, {
-                              isDisabled: !user.isDisabled,
-                            });
-                            toast.success(`${user.name} is now active!`);
-                          }
-                        }}
-                      >
-                        {!user.isDisabled ? "Disable" : "Enable"} account
-                      </DropdownMenuItem>
+
                       <DropdownMenuItem
                         onClick={() => {
                           toast.info(
-                            `Are you sure you want to delete ${user.name} account? This Step is irreversible`,
+                            `Are you sure you want to delete ${user.name} account? This step is irreversible`,
                             {
                               duration: Infinity,
                               cancel: {

@@ -4,10 +4,12 @@ import {
   collection,
   doc,
   getDocs,
+  increment,
   query,
   updateDoc,
   where,
 } from "firebase/firestore";
+import { toast } from "sonner";
 
 export const filterCountries = (
   countries = [],
@@ -50,26 +52,27 @@ export const filterCountries = (
     : filteredCountries;
 };
 
-export const fetchUserByID = async (id) => {
+export const getSingleDocument = async (uid) => {
   const usersRef = collection(db, "users");
-  const q = query(usersRef, where("uid", "==", id));
+  const document = query(usersRef, where("email", "==", uid));
 
   try {
-    const querySnapshot = await getDocs(q);
-    const user = auth.currentUser;
+    const querySnapshot = await getDocs(document);
     if (!querySnapshot.empty) {
-      // querySnapshot.forEach((doc) => {
-      // console.log("document: ", doc.data());
-      // });
       const doc = querySnapshot.docs[0].data();
-      // console.log(doc);
-      return { ...doc, ...user };
+      return doc;
     } else {
-      console.log("no document found!");
+      console.error(`Document ${uid} does not exist`);
     }
   } catch (error) {
     console.error(error);
   }
+};
+
+export const fetchUserByID = async (uid) => {
+  const user = auth.currentUser;
+  const userDetail = await getSingleDocument(uid);
+  return { ...userDetail, ...user };
 };
 
 const fileToBase64 = (file) => {
@@ -117,4 +120,75 @@ export const capitalizeFirstLettersOfName = (word = "john doe") => {
   return word
     .split(" ")
     .reduce((prev, curr) => prev + curr[0].toUpperCase(), "");
+};
+
+export const handleRequestApproval = (doc, requestType, documentId) => {
+  if (doc.isConfirmed) {
+    toast.info(
+      `Click confirm to reverse ${doc.name} ${requestType} request approval`,
+      {
+        duration: Infinity,
+        cancel: {
+          label: "Cancel",
+          onClick: () => {
+            return;
+          },
+        },
+        action: {
+          label: "Confirm",
+          onClick: async () => {
+            const document = await getSingleDocument(doc?.email);
+
+            // const field = `${doc.coinType}_balance`;
+            await updateFirebaseDb("users", document.docRef, {
+              [`${doc.method}_balance`]: increment(
+                requestType === "deposit" ? -doc.amount : doc.amount
+              ),
+              ledger_balance: increment(
+                requestType === "deposit" ? -doc.amount : doc.amount
+              ),
+            });
+
+            await updateFirebaseDb(documentId, doc.docRef, {
+              isConfirmed: false,
+            });
+            toast.success(
+              `${doc.name} ${requestType} request has been reversed`
+            );
+          },
+        },
+      }
+    );
+  } else {
+    toast.info(`Click confirm to approve ${doc.name} ${requestType} request`, {
+      duration: Infinity,
+      cancel: {
+        label: "Cancel",
+        onClick: () => {
+          return;
+        },
+      },
+      action: {
+        label: "Confirm",
+        onClick: async () => {
+          const document = await getSingleDocument(doc?.email);
+
+          // const field = `${doc.coinType}_balance`;
+          await updateFirebaseDb("users", document.docRef, {
+            [`${doc.method}_balance`]: increment(
+              requestType === "deposit" ? doc.amount : -doc.amount
+            ),
+            ledger_balance: increment(
+              requestType === "deposit" ? doc.amount : -doc.amount
+            ),
+          });
+
+          await updateFirebaseDb(documentId, doc.docRef, {
+            isConfirmed: true,
+          });
+          toast.success(`${doc.name} ${requestType} request has been approved`);
+        },
+      },
+    });
+  }
 };

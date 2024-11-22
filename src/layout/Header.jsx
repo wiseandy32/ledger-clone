@@ -2,18 +2,13 @@ import { Link } from "react-router-dom";
 import MobileNav from "../pages/components/MobileNav";
 import logo from "../assets/logo.png";
 import { useAuth } from "../context/auth/use-auth";
-import { useAccount } from "wagmi";
 
 function Header() {
   const { user } = useAuth();
-  const { address } = useAccount();
-  console.log(address);
+
   return (
     <>
-      <header
-        // style={{ outline: "2px solid pink" }}
-        className="flex items-center px-2 md:px-5 justify-between h-20 text-slate-200 font-semibold text-sm fixed pt-6 leading-6 w-full bg-[#0B1120] z-[1000]"
-      >
+      <header className="flex items-center px-2 md:px-5 justify-between h-20 text-slate-200 font-semibold text-sm fixed pt-6 leading-6 w-full bg-[#0B1120] z-[1000]">
         <MobileNav />
         <Link to={"/"}>
           <img src={logo} width={160} height={20} alt="" />
