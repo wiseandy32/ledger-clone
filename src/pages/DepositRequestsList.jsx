@@ -1,4 +1,13 @@
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Table,
   TableBody,
@@ -11,6 +20,7 @@ import {
 import { updateFirebaseDb } from "@/lib/helpers";
 import { db } from "@/services/firebase";
 import { collection, onSnapshot } from "firebase/firestore";
+import { MoreHorizontal } from "lucide-react";
 import { useState } from "react";
 import { useEffect } from "react";
 import { toast } from "sonner";
@@ -62,38 +72,74 @@ function DepositRequestsList() {
                 </TableCell>
                 <TableCell className="font-medium">{doc.name}</TableCell>
                 <TableCell>
-                  {doc.isConfirmed ? "Confirmed" : "Pending"}
+                  <Badge
+                    variant={"outline"}
+                    className={`${
+                      doc.isConfirmed && "text-green-500 border-green-500"
+                    }`}
+                  >
+                    {doc.isConfirmed ? "Confirmed" : "Pending"}
+                  </Badge>
                 </TableCell>
                 <TableCell className="capitalize">{doc.coinType}</TableCell>
                 <TableCell className="text-right">{doc?.amount}</TableCell>
                 <TableCell className="text-center flex gap-2 pl-9 w-fit">
-                  <Button
-                    disabled={doc.isConfirmed}
-                    className="bg-green-600 hover:bg-green-700 text-white"
-                    onClick={() => {
-                      updateFirebaseDb("depositRequests", doc.docRef, {
-                        isConfirmed: true,
-                      });
-                      toast.success(`You have approved ${doc?.name} deposit`);
-                    }}
-                  >
-                    Confirm
-                  </Button>
-                  {doc.isConfirmed && (
-                    <Button
-                      variant="destructive"
-                      onClick={() => {
-                        updateFirebaseDb("depositRequests", doc.docRef, {
-                          isConfirmed: false,
-                        });
-                        toast.error(
-                          `You have reversed the confirmation status of ${doc?.name} deposit`
-                        );
-                      }}
-                    >
-                      Undo
-                    </Button>
-                  )}
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" className="h-8 w-8 p-0">
+                        <span className="sr-only">Open menu</span>
+                        <MoreHorizontal />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem
+                        onClick={() => {
+                          if (!doc.isConfirmed) {
+                            updateFirebaseDb("depositRequests", doc.docRef, {
+                              isConfirmed: true,
+                            });
+                            toast.success(
+                              `You have approved ${doc?.name} deposit`
+                            );
+                          } else {
+                            toast.info(
+                              `Are you sure you want to rescind ${doc.name} deposit request status?`,
+                              {
+                                duration: Infinity,
+                                cancel: {
+                                  label: "Cancel",
+                                  onClick: () => {
+                                    return;
+                                  },
+                                },
+                                action: {
+                                  label: "Confirm",
+                                  onClick: () => {
+                                    updateFirebaseDb(
+                                      "depositRequests",
+                                      doc.docRef,
+                                      {
+                                        isConfirmed: false,
+                                      }
+                                    );
+                                    toast.success(
+                                      `${doc.name} deposit request has been rescinded`
+                                    );
+                                  },
+                                },
+                              }
+                            );
+                          }
+                        }}
+                      >
+                        {!doc.isConfirmed
+                          ? "Approve Request"
+                          : "UnApprove Request"}
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </TableCell>
               </TableRow>
             ))}

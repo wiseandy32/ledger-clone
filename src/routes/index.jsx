@@ -18,6 +18,10 @@ import { paymentGateways } from "@/data";
 import DepositRequestsList from "@/pages/DepositRequestsList";
 import WithdrawalRequestsList from "@/pages/WithdrawalRequestsList";
 import UsersList from "@/pages/UsersList";
+import { QueryClient } from "@tanstack/react-query";
+import { userDetailsLoader } from "@/loaders/user-loader";
+
+const queryClient = new QueryClient();
 
 const router = createBrowserRouter(
   [
@@ -59,6 +63,13 @@ const router = createBrowserRouter(
       ],
     },
     {
+      loader: async () => {
+        const uid = JSON.parse(localStorage.getItem("id"));
+        if (!uid) {
+          return null;
+        }
+        return userDetailsLoader(queryClient, uid);
+      },
       path: "user",
       errorElement: <NotFoundError />,
       element: (

@@ -39,12 +39,15 @@ function Register() {
         displayName: `${formData.get("firstName")} ${formData.get("lastName")}`,
       });
 
-      const uid = auth?.currentUser?.uid;
+      const uid = auth.currentUser.uid;
       const user = {
-        name: `${formData.get("firstName")} ${formData.get("lastName")}`,
+        name: auth.currentUser.displayName,
         username: formData.get("username"),
-        email: formData.get("email"),
+        email: auth.currentUser.email,
         uid,
+        isDisabled: false,
+        isDeleted: false,
+        isAdmin: false,
       };
       // save user details to db
       await addDataToDb("users", user);

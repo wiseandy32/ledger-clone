@@ -72,14 +72,14 @@ export const registrationFormField = [
     // title:
     //   "Password must contain at least 8 characters, with at least one uppercase letter, one lowercase letter, one number, and one special character",
     title: "Password must contain at least 4 characters",
-    min: 4,
+    min: 6,
   },
   {
     name: "confirmPassword",
     label: "confirm your password",
     placeholder: "Confirm your password",
     type: "password",
-    min: 4,
+    min: 6,
   },
 ];
 

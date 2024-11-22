@@ -13,6 +13,7 @@ export const createUser = async (email, password, onError) => {
     await createUserWithEmailAndPassword(auth, email, password);
   } catch (error) {
     const { code } = error;
+    console.log(code);
     if (code === "auth/email-already-in-use") {
       onError("An account with this email already exists.");
     }
@@ -21,18 +22,12 @@ export const createUser = async (email, password, onError) => {
 
 export const addDataToDb = async (field, data) => {
   try {
-    // const docRef = collection(db, field);
-
-    // console.log(docRef, data);
     const docRef = doc(collection(db, field));
     const updatedData = {
       ...data,
       docRef: docRef.id,
     };
-    console.log(updatedData);
     await setDoc(docRef, updatedData);
-    console.log(updatedData);
-    return docRef;
   } catch (error) {
     console.error(error);
   }

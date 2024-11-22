@@ -1,4 +1,5 @@
 import { auth, db } from "@/services/firebase";
+import { updateUserProfile } from "@/utils/auth";
 import {
   collection,
   doc,
@@ -86,8 +87,11 @@ export const handleFileSelect = async (file) => {
   const q = query(usersRef, where("uid", "==", auth.currentUser.uid));
   // console.log()
   try {
-    // Convert file to Base64
     const base64String = await fileToBase64(file);
+    await updateUserProfile({
+      photoURL: base64String,
+    });
+    // Convert file to Base64
     const querySnapshot = await getDocs(q);
     const docs = querySnapshot.docs[0];
     // console.log(doc.id);
@@ -107,4 +111,10 @@ export const handleFileSelect = async (file) => {
 export const updateFirebaseDb = async (documentPath, docId, data) => {
   const docRef = doc(db, documentPath, docId);
   await updateDoc(docRef, data);
+};
+
+export const capitalizeFirstLettersOfName = (word = "john doe") => {
+  return word
+    .split(" ")
+    .reduce((prev, curr) => prev + curr[0].toUpperCase(), "");
 };

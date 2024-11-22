@@ -1,20 +1,17 @@
 import { useAuth } from "@/context/auth/use-auth";
+import { useTheme } from "@/context/theme-provider";
 import { wallets } from "@/data";
 import { CryptoCurrencyMarket } from "react-ts-tradingview-widgets";
 
 function UserDashboard() {
   const { user } = useAuth();
+  const { theme } = useTheme();
   return (
     <>
       <div className="">
         <h1 className="text-2xl md:text-4xl font-bold">
-          {/* <h1 className="text-4xl font-bold border-b-2 border-solid border-sidebar-border"> */}
           Welcome, {user?.displayName}
         </h1>
-        {/* <p>
-          We are delighted to have you, and we hope you will have a great stay
-          with us!!
-        </p> */}
         <p className="md:mt-2 text-sm">
           Here&apos;s an overview of your account and the latest crypto currency
           prices.
@@ -52,7 +49,7 @@ function UserDashboard() {
       </div>
       <div className="w-full">
         <CryptoCurrencyMarket
-          colorTheme="dark"
+          colorTheme={theme}
           width="100%"
         ></CryptoCurrencyMarket>
       </div>

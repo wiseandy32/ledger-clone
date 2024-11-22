@@ -12,10 +12,13 @@ import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import { useNavigate } from "react-router-dom";
 import ModeToggle from "@/components/theme-toggle";
 import { useLocation } from "react-router-dom";
+import { ConnectKitButton } from "connectkit";
+import { useTheme } from "@/context/theme-provider";
 
 function Dashboard({ children }) {
   const { pathname } = useLocation();
   const navigate = useNavigate();
+  const { theme } = useTheme();
   const paths = pathname.split("/").filter((item) => item !== "");
 
   return (
@@ -64,7 +67,8 @@ function Dashboard({ children }) {
               </BreadcrumbList>
             </Breadcrumb>
           </div>
-          <div className="justify-self-end">
+          <div className="justify-self-end flex gap-3">
+            <ConnectKitButton mode={theme} />
             <ModeToggle />
           </div>
         </header>
