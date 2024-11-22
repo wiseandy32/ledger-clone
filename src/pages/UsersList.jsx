@@ -1,4 +1,13 @@
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Table,
   TableBody,
@@ -10,6 +19,7 @@ import {
 import { updateFirebaseDb } from "@/lib/helpers";
 import { db } from "@/services/firebase";
 import { collection, onSnapshot } from "firebase/firestore";
+import { MoreHorizontal } from "lucide-react";
 import { useState } from "react";
 import { useEffect } from "react";
 import { toast } from "sonner";
@@ -46,17 +56,16 @@ function UsersList() {
           <TableHeader>
             <TableRow>
               <TableHead
-                className={`${
-                  filteredUsers.length === 0 ? "w-full" : "w-[100px]"
-                }`}
+                className={`${filteredUsers.length === 0 ? "w-full" : "w-fit"}`}
               >
                 ID
               </TableHead>
               <TableHead>Name</TableHead>
-              <TableHead>email</TableHead>
-              {/* <TableHead>Method</TableHead>
-              <TableHead>Wallet Address</TableHead>
-              <TableHead className="text-right">Amount ($)</TableHead> */}
+              <TableHead>Email</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Role</TableHead>
+              {/* <TableHead className="text-right">role</TableHead> */}
+              <TableHead className="text-right"></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -67,42 +76,136 @@ function UsersList() {
                 </TableCell>
                 <TableCell className="capitalize">{user.name}</TableCell>
                 <TableCell className="font-medium">{user.email}</TableCell>
-                <TableCell>{user.username}</TableCell>
-                {/* <TableCell className="text-right">{doc.amount}</TableCell> */}
-                <TableCell className="text-center flex gap-2 pl-9 w-fit">
-                  {user.isConfirmed && (
-                    <Button
-                      variant="destructive"
-                      onClick={() => {
-                        const canDelete = window.confirm(
-                          "Are you sure? This action is irreversible"
-                        );
-                        if (!canDelete) return;
-
-                        updateFirebaseDb("users", user.docRef, {
-                          isDeleted: true,
-                        });
-
-                        toast.error(`${user.name} has been deleted`);
-                      }}
-                    >
-                      Delete
-                    </Button>
-                  )}
-                  {/* <Button
-                    disabled={doc?.isConfirmed}
-                    className="bg-green-600 hover:bg-green-700 text-white"
-                    onClick={() => {
-                      updateFirebaseDb("withdrawalRequests", doc.docRef, {
-                        isConfirmed: true,
-                      });
-                      toast.success(
-                        `You have approved ${doc.name} withdrawal request`
-                      );
-                    }}
+                {/* <TableCell>{user.username}</TableCell> */}
+                <TableCell>
+                  <Badge
+                    variant={"outline"}
+                    className={`${
+                      !user.isDisabled
+                        ? "text-green-500 border-green-500"
+                        : "text-red-500 border-red-500"
+                    }`}
                   >
-                    Confirm
-                  </Button> */}
+                    {!user.isDisabled ? "Active" : "Disabled"}
+                  </Badge>
+                </TableCell>
+                <TableCell>{!user.isAdmin ? "user" : "Admin"}</TableCell>
+                <TableCell className="text-center flex gap-2 pl-9 w-fit">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" className="h-8 w-8 p-0">
+                        <span className="sr-only">Open menu</span>
+                        <MoreHorizontal />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem
+                        onClick={() => {
+                          if (!user.isAdmin) {
+                            toast.info(
+                              `Are you sure? ${user.name} will be able to perform admin duties`,
+                              {
+                                duration: Infinity,
+                                cancel: {
+                                  label: "Cancel",
+                                  onClick: () => {
+                                    return;
+                                  },
+                                },
+                                action: {
+                                  label: "Confirm",
+                                  onClick: () => {
+                                    updateFirebaseDb("users", user.docRef, {
+                                      isAdmin: !user.isAdmin,
+                                    });
+                                    toast.success(
+                                      `${user.name} is now an admin!`
+                                    );
+                                  },
+                                },
+                              }
+                            );
+                          } else {
+                            updateFirebaseDb("users", user.docRef, {
+                              isAdmin: !user.isAdmin,
+                            });
+                            toast.success(
+                              `${user.name} is no longer an admin!`
+                            );
+                          }
+                        }}
+                      >
+                        {!user.isAdmin ? "Make" : "Remove as"} admin
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => {
+                          if (!user.isDisabled) {
+                            toast.info(
+                              `Are you sure? ${user.name} will not be able to login again`,
+                              {
+                                duration: Infinity,
+                                cancel: {
+                                  label: "Cancel",
+                                  onClick: () => {
+                                    return;
+                                  },
+                                },
+                                action: {
+                                  label: "Confirm",
+                                  onClick: () => {
+                                    updateFirebaseDb("users", user.docRef, {
+                                      isDisabled: !user.isDisabled,
+                                    });
+                                    toast.success(
+                                      `${user.name} is now active!`
+                                    );
+                                  },
+                                },
+                              }
+                            );
+                          } else {
+                            updateFirebaseDb("users", user.docRef, {
+                              isDisabled: !user.isDisabled,
+                            });
+                            toast.success(`${user.name} is now active!`);
+                          }
+                        }}
+                      >
+                        {!user.isDisabled ? "Disable" : "Enable"} account
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => {
+                          toast.info(
+                            `Are you sure you want to delete ${user.name} account? This Step is irreversible`,
+                            {
+                              duration: Infinity,
+                              cancel: {
+                                label: "Cancel",
+                                onClick: () => {
+                                  return;
+                                },
+                              },
+                              action: {
+                                label: "Confirm",
+                                onClick: () => {
+                                  updateFirebaseDb("users", user.docRef, {
+                                    isDeleted: true,
+                                  });
+                                  toast.success(
+                                    `${user.name} account has been deleted.`
+                                  );
+                                },
+                              },
+                            }
+                          );
+                        }}
+                      >
+                        Delete account
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </TableCell>
               </TableRow>
             ))}

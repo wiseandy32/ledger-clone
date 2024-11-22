@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import { BadgeCheck, ChevronsUpDown, LogOut } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -20,6 +19,7 @@ import {
 import { logout } from "@/utils/auth";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/auth/use-auth";
+import { capitalizeFirstLettersOfName } from "@/lib/helpers";
 
 export function NavUser() {
   const { isMobile } = useSidebar();
@@ -38,10 +38,7 @@ export function NavUser() {
               <Avatar className="h-8 w-8 rounded-lg">
                 <AvatarImage src={user?.photoURL} alt={user?.displayName} />
                 <AvatarFallback className="rounded-lg">
-                  {!user
-                    ? ""
-                    : user?.firstName.charAt(0).toUpperCase() +
-                      user?.lastName.charAt(0).toUpperCase()}
+                  {capitalizeFirstLettersOfName(user?.displayName)}
                 </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
@@ -64,10 +61,7 @@ export function NavUser() {
                 <Avatar className="h-8 w-8 rounded-lg">
                   <AvatarImage src={user?.photoURL} alt={user?.displayName} />
                   <AvatarFallback className="rounded-lg">
-                    {!user
-                      ? ""
-                      : user?.firstName.charAt(0).toUpperCase() +
-                        user?.lastName.charAt(0).toUpperCase()}
+                    {capitalizeFirstLettersOfName(user?.displayName)}
                   </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">

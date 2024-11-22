@@ -1,4 +1,13 @@
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Table,
   TableBody,
@@ -11,6 +20,7 @@ import {
 import { updateFirebaseDb } from "@/lib/helpers";
 import { db } from "@/services/firebase";
 import { collection, onSnapshot } from "firebase/firestore";
+import { MoreHorizontalIcon } from "lucide-react";
 import { useState } from "react";
 import { useEffect } from "react";
 import { toast } from "sonner";
@@ -69,41 +79,75 @@ function WithdrawalRequestsList() {
                 </TableCell>
                 <TableCell className="font-medium">{doc.name}</TableCell>
                 <TableCell>
-                  {doc.isConfirmed ? "Confirmed" : "Pending"}
+                  <Badge
+                    variant={"outline"}
+                    className={`${
+                      doc.isConfirmed && "text-green-500 border-green-500"
+                    }`}
+                  >
+                    {doc.isConfirmed ? "Approved" : "Pending"}
+                  </Badge>
                 </TableCell>
                 <TableCell className="capitalize">{doc.method}</TableCell>
                 <TableCell>{doc.walletAddress}</TableCell>
                 <TableCell className="text-right">{doc.amount}</TableCell>
                 <TableCell className="text-center flex gap-2 pl-9 w-fit">
-                  <Button
-                    disabled={doc.isConfirmed}
-                    className="bg-green-600 hover:bg-green-700 text-white"
-                    onClick={() => {
-                      updateFirebaseDb("withdrawalRequests", doc.docRef, {
-                        isConfirmed: true,
-                      });
-                      toast.success(
-                        `You have approved ${doc.name} withdrawal request`
-                      );
-                    }}
-                  >
-                    Confirm
-                  </Button>
-                  {doc.isConfirmed && (
-                    <Button
-                      variant="destructive"
-                      onClick={() => {
-                        updateFirebaseDb("withdrawalRequests", doc.docRef, {
-                          isConfirmed: false,
-                        });
-                        toast.error(
-                          `You have reversed the confirmation status of ${doc.name} Withdrawal request`
-                        );
-                      }}
-                    >
-                      Undo
-                    </Button>
-                  )}
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" className="h-8 w-8 p-0">
+                        <span className="sr-only">Open menu</span>
+                        <MoreHorizontalIcon />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem
+                        onClick={() => {
+                          if (doc.isConfirmed) {
+                            updateFirebaseDb("withdrawalRequests", doc.docRef, {
+                              isConfirmed: false,
+                            });
+                            toast.success(
+                              `You have rescinded ${doc.name} withdrawal request status`
+                            );
+                          } else {
+                            toast.info(
+                              `Do you want to approve ${doc?.name} withdrawal request`,
+                              {
+                                duration: Infinity,
+                                cancel: {
+                                  label: "No",
+                                  onClick: () => {
+                                    return;
+                                  },
+                                },
+                                action: {
+                                  label: "Yes",
+                                  onClick: () => {
+                                    updateFirebaseDb(
+                                      "withdrawalRequests",
+                                      doc.docRef,
+                                      {
+                                        isConfirmed: true,
+                                      }
+                                    );
+                                    toast.success(
+                                      `${doc.name} withdrawal request has been rescinded`
+                                    );
+                                  },
+                                },
+                              }
+                            );
+                          }
+                        }}
+                      >
+                        {!doc.isConfirmed
+                          ? "Approve Request"
+                          : "UnApprove Request"}
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </TableCell>
               </TableRow>
             ))}

@@ -2,10 +2,12 @@ import { Link } from "react-router-dom";
 import MobileNav from "../pages/components/MobileNav";
 import logo from "../assets/logo.png";
 import { useAuth } from "../context/auth/use-auth";
+import { useAccount } from "wagmi";
 
 function Header() {
   const { user } = useAuth();
-
+  const { address } = useAccount();
+  console.log(address);
   return (
     <>
       <header

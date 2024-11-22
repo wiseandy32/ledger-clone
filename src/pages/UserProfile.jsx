@@ -6,7 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/auth/use-auth";
 import { useRef } from "react";
-import { handleFileSelect } from "@/lib/helpers";
+import { capitalizeFirstLettersOfName, handleFileSelect } from "@/lib/helpers";
 import { toast } from "sonner";
 
 function UserProfile() {
@@ -48,7 +48,7 @@ function UserProfile() {
       console.error("Error handling file change:", error);
     }
   };
-
+  console.log(userImage);
   return (
     <>
       <div>
@@ -60,7 +60,9 @@ function UserProfile() {
       <div className="bg-muted/50 p-5 rounded-md flex items-center gap-2">
         {/* <div className="border-solid border-2 border-red-500 before:content-[hello] before:h-[5px] before:w-full before:border-b-[100px] bg-black bottom-[0]"> */}
         <Avatar
-          className="w-14 h-14 object-contain object-center"
+          className={`w-14 h-14 object-contain object-center ${
+            isNotEditing === false && "cursor-pointer"
+          }`}
           onClick={handleAvatarClick}
         >
           <AvatarImage
@@ -68,10 +70,7 @@ function UserProfile() {
             src={userImage}
           />
           <AvatarFallback>
-            {!user
-              ? ""
-              : user?.firstName.charAt(0).toUpperCase() +
-                user?.lastName.charAt(0).toUpperCase()}
+            {capitalizeFirstLettersOfName(user?.name)}
           </AvatarFallback>
         </Avatar>
         <input
@@ -81,6 +80,7 @@ function UserProfile() {
           accept="image/png, image/jpeg, image/webp"
           name="avatar"
           ref={fileInputRef}
+          disabled={isNotEditing}
           onChange={handleFileChange}
         />
         {/* </div> */}
