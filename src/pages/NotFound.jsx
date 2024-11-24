@@ -1,9 +1,11 @@
 import { Button } from "@/components/ui/button";
+import { useRouteError } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
 export default function NotFoundError() {
   const navigate = useNavigate();
-
+  const error = useRouteError();
+  console.log(error);
   return (
     <div className="h-svh">
       <div className="m-auto flex h-full w-full flex-col items-center justify-center gap-2">

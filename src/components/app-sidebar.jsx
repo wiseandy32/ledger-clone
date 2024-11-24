@@ -12,6 +12,7 @@ import logo from "@/assets/logo.png";
 import { LayoutGrid } from "lucide-react";
 import { Download } from "lucide-react";
 import { useLocation } from "react-router-dom";
+import { User2 } from "lucide-react";
 // This is sample data.
 const data = {
   navMain: [
@@ -35,7 +36,7 @@ const data = {
     {
       title: "Users",
       url: "/admin",
-      icon: LayoutGrid,
+      icon: User2,
     },
     {
       title: "Deposit Request",

@@ -10,6 +10,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { deleteUserData, getSingleDocument } from "@/lib/helpers";
 
 function Login() {
   const [error, setError] = useState("");
@@ -26,12 +27,21 @@ function Login() {
       const password = formData.get("password");
       console.log(email, password);
       const { user } = await signInWithEmailAndPassword(auth, email, password);
-      if (!user.emailVerified) {
-        signOut(auth);
-        return setError(
-          "Email verification is required. Please verify your email to proceed"
-        );
+      const userDoc = await getSingleDocument("uid", user.uid);
+
+      if (userDoc.isDeleted) {
+        await deleteUserData(user.uid, user);
+        localStorage.removeItem("id");
+        setError("This user does not exist");
+        return;
       }
+
+      // if (!user.emailVerified) {
+      //   signOut(auth);
+      //   return setError(
+      //     "Email verification is required. Please verify your email to proceed"
+      //   );
+      // }
       navigate(state?.from || "/user");
     } catch (error) {
       const { code } = error;

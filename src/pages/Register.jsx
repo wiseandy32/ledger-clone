@@ -50,8 +50,7 @@ function Register() {
       };
       // save user details to db
       await addDataToDb("users", user);
-      await sendEmailVerification(auth.currentUser);
-      // TODO: fix sign up not working
+      // await sendEmailVerification(auth.currentUser);
       // sign the user out
       await signOut(auth);
       setIsVerificationLinkSent(true);
@@ -60,17 +59,6 @@ function Register() {
     }
     setIsSubmitting(false);
   };
-
-  // const loginWithGoogle = async () => {
-  //   const provider = new GoogleAuthProvider();
-  //   provider.setCustomParameters({ prompt: "select_account" });
-  //   try {
-  //     await signInWithPopup(auth, provider);
-  //     navigate("/dashboard");
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // };
 
   return (
     <section className="h-[120vh] mb-[10vh] bg-bottom bg-no-repeat bg-[#0B1120] bottom-10 inset-0  sm:h-[100dvh] md:h-[125dvh] relative">

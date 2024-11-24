@@ -28,7 +28,7 @@ function Header() {
               </li>
             ))}
           </ul>
-          {!user ? (
+          {Object.keys(user ? user : {}).length === 0 ? (
             <div className="flex items-center flex-col md:flex-row px-5 md:px-0 gap-4 w-full md:w-auto md:border-l-2 md:border-slate-200 md:border-solid md:ml-6 md:pl-6 ">
               {[
                 { title: "sign up", path: "register" },

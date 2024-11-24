@@ -8,17 +8,19 @@ import { useAuth } from "@/context/auth/use-auth";
 import { useRef } from "react";
 import { capitalizeFirstLettersOfName, handleFileSelect } from "@/lib/helpers";
 import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
+import { auth } from "@/services/firebase";
 
 function UserProfile() {
   const [country, setCountry] = useState("");
-  const { user } = useAuth();
-  const [userImage, setUserImage] = useState(
-    JSON.parse(localStorage.getItem("dp")) || null
-  );
+  const { user, setUserImage } = useAuth();
+  // const [userImage, setUserImage] = useState(
+  //   JSON.parse(localStorage.getItem("dp")) || null
+  // );
   const [isNotEditing, setIsNotEditing] = useState(true);
   const [isTouched, setIsTouched] = useState(false);
   const [count, setCount] = useState(0);
-
+  const qc = useQueryClient();
   // TODO: finish this component: add region and postal id
   const fileInputRef = useRef(null);
 
@@ -36,11 +38,13 @@ function UserProfile() {
 
     try {
       const reader = new FileReader();
-      reader.onload = () => {
-        setUserImage(reader.result);
-      };
-      reader.readAsDataURL(file);
-      await handleFileSelect(file);
+
+      // reader.onload = () => {
+      //   setUserImage(reader.result);
+      // };
+      // setUserImage(reader.result);
+      await handleFileSelect(file, (img) => setUserImage(img));
+      qc.invalidateQueries({ queryKey: ["uid"] });
 
       // Optionally: Reset the file input to allow re-uploading the same file
       e.target.value = null;
@@ -48,7 +52,7 @@ function UserProfile() {
       console.error("Error handling file change:", error);
     }
   };
-  console.log(userImage);
+
   return (
     <>
       <div>
@@ -67,7 +71,7 @@ function UserProfile() {
         >
           <AvatarImage
             className="object-contain object-center"
-            src={userImage}
+            src={user?.photoURL}
           />
           <AvatarFallback>
             {capitalizeFirstLettersOfName(user?.name)}
