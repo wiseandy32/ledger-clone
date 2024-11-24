@@ -3,8 +3,6 @@ import { auth, db } from "../services/firebase";
 import {
   createUserWithEmailAndPassword,
   updateProfile,
-  GoogleAuthProvider,
-  signInWithPopup,
   signOut,
 } from "firebase/auth";
 
@@ -41,20 +39,10 @@ export const updateUserProfile = async (newInfo) => {
   }
 };
 
-export const loginWithGoogle = async (navigate) => {
-  const provider = new GoogleAuthProvider();
-  provider.setCustomParameters({ display: "popup", prompt: "select_account" });
-  try {
-    await signInWithPopup(auth, provider);
-    navigate("/dashboard");
-  } catch (error) {
-    console.error(error);
-  }
-};
-
 export const logout = async (navigate) => {
   try {
     await signOut(auth);
+    localStorage.removeItem("id");
     navigate("/");
   } catch (error) {
     console.error(error);

@@ -38,7 +38,8 @@ function GateWay() {
     const formData = new FormData(e.target);
     const depositRequestInfo = {
       uid: auth.currentUser.uid,
-      method: data.type,
+      method: data.value,
+      coinType: data.type,
       name: auth.currentUser.displayName,
       amount: formData.get("depositAmount"),
       email: auth.currentUser.email,

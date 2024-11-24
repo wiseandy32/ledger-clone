@@ -1,7 +1,9 @@
 import { auth, db } from "@/services/firebase";
 import { updateUserProfile } from "@/utils/auth";
+import { deleteUser } from "firebase/auth";
 import {
   collection,
+  deleteDoc,
   doc,
   getDocs,
   increment,
@@ -52,17 +54,15 @@ export const filterCountries = (
     : filteredCountries;
 };
 
-export const getSingleDocument = async (uid) => {
+export const getSingleDocument = async (queryKey = "email", uid) => {
   const usersRef = collection(db, "users");
-  const document = query(usersRef, where("email", "==", uid));
+  const document = query(usersRef, where(`${queryKey}`, "==", uid));
 
   try {
     const querySnapshot = await getDocs(document);
     if (!querySnapshot.empty) {
       const doc = querySnapshot.docs[0].data();
       return doc;
-    } else {
-      console.error(`Document ${uid} does not exist`);
     }
   } catch (error) {
     console.error(error);
@@ -70,9 +70,12 @@ export const getSingleDocument = async (uid) => {
 };
 
 export const fetchUserByID = async (uid) => {
-  const user = auth.currentUser;
-  const userDetail = await getSingleDocument(uid);
-  return { ...userDetail, ...user };
+  if (!uid) return false;
+  const currentUser = auth.currentUser;
+  const userDoc = await getSingleDocument("uid", uid);
+  const user = { ...currentUser, ...userDoc };
+  // changeUserID(user.uid);
+  return user;
 };
 
 const fileToBase64 = (file) => {
@@ -84,28 +87,20 @@ const fileToBase64 = (file) => {
   });
 };
 
-export const handleFileSelect = async (file) => {
+export const handleFileSelect = async (file, changeImage) => {
   if (!file) return;
-  const usersRef = collection(db, "users");
-  const q = query(usersRef, where("uid", "==", auth.currentUser.uid));
-  // console.log()
   try {
+    const userDetail = await getSingleDocument("uid", auth.currentUser.id);
+    // convert to base64
     const base64String = await fileToBase64(file);
+    changeImage(base64String);
     await updateUserProfile({
       photoURL: base64String,
     });
-    // Convert file to Base64
-    const querySnapshot = await getDocs(q);
-    const docs = querySnapshot.docs[0];
-    // console.log(doc.id);
-
+    await updateFirebaseDb("users", userDetail.docRef, { photo: base64String });
     localStorage.setItem("dp", JSON.stringify(base64String));
-    const userDoc = doc(db, "users", docs.id);
-    console.log(userDoc);
-    // await updateProfile(user, { photoURL: base64String });
-    await updateDoc(userDoc, { photoURL: base64String });
 
-    // console.log("Profile photo updated successfully:", base64String);
+    console.log("Profile photo updated successfully:", base64String);
   } catch (error) {
     console.error("Error updating profile photo:", error.message);
   }
@@ -117,9 +112,9 @@ export const updateFirebaseDb = async (documentPath, docId, data) => {
 };
 
 export const capitalizeFirstLettersOfName = (word = "john doe") => {
-  return word?
-    .split(" ")?
-    .reduce((prev, curr) => prev + curr[0].toUpperCase(), "");
+  return word
+    ?.split(" ")
+    ?.reduce((prev, curr) => prev + curr[0]?.toUpperCase(), "");
 };
 
 export const handleRequestApproval = (doc, requestType, documentId) => {
@@ -141,7 +136,7 @@ export const handleRequestApproval = (doc, requestType, documentId) => {
 
             // const field = `${doc.coinType}_balance`;
             await updateFirebaseDb("users", document.docRef, {
-              [`${doc.method}_balance`]: increment(
+              [`${doc.method}`]: increment(
                 requestType === "deposit" ? -doc.amount : doc.amount
               ),
               ledger_balance: increment(
@@ -173,9 +168,8 @@ export const handleRequestApproval = (doc, requestType, documentId) => {
         onClick: async () => {
           const document = await getSingleDocument(doc?.email);
 
-          // const field = `${doc.coinType}_balance`;
           await updateFirebaseDb("users", document.docRef, {
-            [`${doc.method}_balance`]: increment(
+            [`${doc.method}`]: increment(
               requestType === "deposit" ? doc.amount : -doc.amount
             ),
             ledger_balance: increment(
@@ -191,4 +185,10 @@ export const handleRequestApproval = (doc, requestType, documentId) => {
       },
     });
   }
+};
+
+export const deleteUserData = async (uid, user) => {
+  const userDoc = await getSingleDocument("uid", uid);
+  await deleteUser(user);
+  await deleteDoc(doc(db, "users", userDoc.docRef));
 };

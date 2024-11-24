@@ -4,10 +4,14 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { useAuth } from "@/context/auth/use-auth";
+import { LayoutGrid } from "lucide-react";
+import { MdAdminPanelSettings } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 
 export function NavMain({ items }) {
+  const { user } = useAuth();
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const paths = pathname.split("/").filter((item) => item !== "");
@@ -27,6 +31,25 @@ export function NavMain({ items }) {
           </SidebarMenuButton>
         </SidebarMenuItem>
       ))}
+
+      {user?.isAdmin && (
+        <SidebarMenuItem className="mt-3">
+          <SidebarMenuButton
+            isActive={false}
+            className="pl-12 py-7 text-lg"
+            onClick={() =>
+              navigate(!paths.includes("admin") ? "/admin" : "/user")
+            }
+          >
+            {!paths.includes("admin") ? (
+              <MdAdminPanelSettings />
+            ) : (
+              <LayoutGrid />
+            )}
+            {!paths.includes("admin") ? "Admin Panel" : "Dashboard"}
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      )}
     </SidebarMenu>
   );
 }

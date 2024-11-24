@@ -139,24 +139,24 @@ export const chooseUsCardInfo = [
 ];
 
 export const wallets = [
-  { name: "Ledger", icon: DollarSign },
-  { name: "BTC", icon: btcIcon },
-  { name: "ETH", icon: ethIcon },
-  { name: "USDT", icon: usdtIcon },
-  { name: "XLM", icon: xlmIcon },
-  { name: "XRP", icon: xrpIcon },
-  { name: "DOGE", icon: dogeIcon },
-  { name: "LTC", icon: ltcIcon },
-  { name: "ALGO", icon: algoIcon },
-  { name: "SOL", icon: solIcon },
-  { name: "BNB", icon: bnbIcon },
-  { name: "QTUM", icon: qtumIcon },
-  { name: "TEZOS", icon: tezosIcon },
-  { name: "THETA", icon: thetaIcon },
-  { name: "FILECoin", icon: fileCoinIcon },
-  { name: "NANO", icon: nanoIcon },
-  { name: "SHIBA", icon: shibaIcon },
-  { name: "Total Withdrawals", icon: thetaIcon },
+  { name: "Ledger", icon: DollarSign, balance: 0 },
+  { name: "BTC", icon: btcIcon, balance: 0 },
+  { name: "ETH", icon: ethIcon, balance: 0 },
+  { name: "USDT", icon: usdtIcon, balance: 0 },
+  { name: "XLM", icon: xlmIcon, balance: 0 },
+  { name: "XRP", icon: xrpIcon, balance: 0 },
+  { name: "DOGE", icon: dogeIcon, balance: 0 },
+  { name: "LTC", icon: ltcIcon, balance: 0 },
+  { name: "ALGO", icon: algoIcon, balance: 0 },
+  { name: "SOL", icon: solIcon, balance: 0 },
+  { name: "BNB", icon: bnbIcon, balance: 0 },
+  { name: "QTUM", icon: qtumIcon, balance: 0 },
+  { name: "TEZOS", icon: tezosIcon, balance: 0 },
+  { name: "THETA", icon: thetaIcon, balance: 0 },
+  { name: "FILECoin", icon: fileCoinIcon, balance: 0 },
+  { name: "NANO", icon: nanoIcon, balance: 0 },
+  { name: "SHIBA", icon: shibaIcon, balance: 0 },
+  { name: "Total Withdrawals", icon: thetaIcon, balance: 0 },
 ];
 
 export const depositMethods = [
@@ -171,30 +171,35 @@ export const depositMethods = [
 export const paymentGateways = [
   {
     type: "bitcoin",
+    value: "BTC_balance",
     qrCode: bitcoinQRCode,
     icon: btcIcon,
     walletAddress: "bc1qx4np0tgsl0ys7jcqes4cva9y40wjhf5nfhv066",
   },
   {
     type: "xrp",
+    value: "XRP_balance",
     qrCode: xrpQRCode,
     icon: xrpIcon,
     walletAddress: "r9VvmZmL7VASmBb8p3ByjnjxdKJ62BQme1",
   },
   {
     type: "xlm",
+    value: "XLM_balance",
     qrCode: xlmQRCode,
     icon: xlmIcon,
     walletAddress: "GDPNUJUQV6KMBEXDEE3M3EHW6IQPFHIF6LWA45IQOG4Q4NIRKSNV2QZ5",
   },
   {
     type: "ethereum",
+    value: "ETH_balance",
     qrCode: ethQRCode,
     icon: ethIcon,
     walletAddress: "0xFb23Bf97A6e70A978F8dC518EC7d83E57aad7584",
   },
   {
     type: "usdt",
+    value: "USDT_balance",
     extra: "(TRC20)",
     qrCode: usdtQRCode,
     icon: usdtIcon,
@@ -202,6 +207,7 @@ export const paymentGateways = [
   },
   {
     type: "dogecoin",
+    value: "DOGE_balance",
     qrCode: dogeQRCode,
     icon: dogeIcon,
     walletAddress: "DLFyTv52jgjptxXxzwaDwUQUYAZ72vZjKE",
@@ -211,66 +217,66 @@ export const paymentGateways = [
 export const withdrawalOptions = [
   {
     title: "XLM",
-    value: "xlm",
+    value: "XLM_balance",
   },
   {
     title: "XRP",
-    value: "xrp",
+    value: "XRP_balance",
   },
   {
     title: "Bitcoin",
-    value: "bitcoin",
+    value: "BTC_balance",
   },
   {
     title: "USDT",
-    value: "usdt",
+    value: "USDT_balance",
   },
   {
     title: "Ethereum",
-    value: "ethereum",
+    value: "ETH_balance",
   },
   {
     title: "Doge",
-    value: "dogecoin",
+    value: "DOGE_balance",
   },
   {
     title: "Litecoin",
-    value: "litecoin",
+    value: "litecoin_balance",
   },
   {
     title: "ALGORAND",
-    value: "algorand",
+    value: "algorand_balance",
   },
   {
     title: "SOLANA",
-    value: "solana",
+    value: "solana_balance",
   },
   {
     title: "BNB",
-    value: "bnb",
+    value: "bnb_balance",
   },
   {
     title: "QTUM",
-    value: "qtum",
+    value: "qtum_balance",
   },
   {
     title: "TEZOS (XTZ)",
-    value: "tezos",
+    value: "tezos_balance",
   },
   {
     title: "THETA",
-    value: "theta",
+    value: "theta_balance",
   },
   {
     title: "FILECOIN",
-    value: "filecoin",
+    value: "filecoin_balance",
   },
   {
     title: "NANO",
-    value: "nano",
+    value: "nano_balance",
   },
   {
     title: "SHIBA",
-    value: "shiba",
+    value: "shiba_balance",
   },
 ];

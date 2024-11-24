@@ -4,7 +4,6 @@ import Landing from "../pages/Landing";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
 import ProtectedRoutes from "./ProtectedRoutes";
-import AuthProvider from "../context/auth/AuthProvider";
 import { redirect } from "react-router-dom";
 import ForgotPassword from "../pages/ForgotPassword";
 import NotFoundError from "@/pages/NotFound";
@@ -18,31 +17,23 @@ import { paymentGateways } from "@/data";
 import DepositRequestsList from "@/pages/DepositRequestsList";
 import WithdrawalRequestsList from "@/pages/WithdrawalRequestsList";
 import UsersList from "@/pages/UsersList";
-import { QueryClient } from "@tanstack/react-query";
-import { userDetailsLoader } from "@/loaders/user-loader";
-
-const queryClient = new QueryClient();
+import { fetchUserByID } from "@/lib/helpers";
 
 const router = createBrowserRouter(
   [
     {
       path: "/",
-      errorElement: <NotFoundError />,
-      element: (
-        <AuthProvider>
-          <Layout />
-        </AuthProvider>
-      ),
       loader: ({ request }) => {
-        const user = JSON.parse(localStorage.getItem("id"));
-        const destinationPath = request?.url.split("/").pop().toLowerCase();
-
-        if (user && ["register", "login"].includes(destinationPath)) {
-          return redirect("/dashboard");
+        const uid = localStorage.getItem("id");
+        const path = request.url.split("/").pop().toLowerCase();
+        if (uid && ["register", "login"].includes(path)) {
+          return redirect("/user");
         }
 
         return null;
       },
+      element: <Layout />,
+      errorElement: <NotFoundError />,
       children: [
         {
           index: true,
@@ -63,78 +54,85 @@ const router = createBrowserRouter(
       ],
     },
     {
-      loader: async () => {
-        const uid = JSON.parse(localStorage.getItem("id"));
+      loader: ({ request }) => {
+        const uid = localStorage.getItem("id");
+        const from = "/" + request.url.split("/").slice(3).join("/");
+
         if (!uid) {
-          return null;
+          return redirect("/login", { state: { from } });
         }
-        return userDetailsLoader(queryClient, uid);
+        return null;
       },
-      path: "user",
+      element: <ProtectedRoutes />,
       errorElement: <NotFoundError />,
-      element: (
-        <AuthProvider>
-          <ProtectedRoutes>
-            <DashboardLayout />
-          </ProtectedRoutes>
-        </AuthProvider>
-      ),
       children: [
         {
-          index: true,
-          element: <UserDashboard />,
-        },
-        {
-          path: "profile",
-          element: <UserProfile />,
-        },
-        {
-          path: "deposit",
-          element: <Deposit />,
-        },
-        {
-          path: "withdraw",
-          element: <Withdrawal />,
-        },
-        {
-          path: "deposit/:gateway",
-          loader: ({ params }) => {
-            const [data] = paymentGateways.filter(
-              (gateway) => gateway.type === params.gateway
-            );
+          path: "user",
+          element: <DashboardLayout />,
+          children: [
+            {
+              index: true,
+              element: <UserDashboard />,
+            },
+            {
+              path: "profile",
+              element: <UserProfile />,
+            },
+            {
+              path: "deposit",
+              element: <Deposit />,
+            },
+            {
+              path: "withdraw",
+              element: <Withdrawal />,
+            },
+            {
+              path: "deposit/:gateway",
+              loader: ({ params }) => {
+                const [data] = paymentGateways.filter(
+                  (gateway) => gateway.type === params.gateway
+                );
 
-            if (!data) {
+                if (!data) {
+                  return null;
+                }
+
+                return data;
+              },
+              element: <GateWay />,
+            },
+          ],
+        },
+        {
+          loader: async () => {
+            const uid = localStorage.getItem("id");
+
+            if (!uid) {
               return null;
             }
 
-            return data;
+            const user = await fetchUserByID(uid);
+            if (!user.isAdmin) {
+              return redirect("/user");
+            }
+            return user;
           },
-          element: <GateWay />,
-        },
-      ],
-    },
-    {
-      path: "admin",
-      errorElement: <NotFoundError />,
-      element: (
-        <AuthProvider>
-          <ProtectedRoutes>
-            <DashboardLayout />
-          </ProtectedRoutes>
-        </AuthProvider>
-      ),
-      children: [
-        {
-          index: true,
-          element: <UsersList />,
-        },
-        {
-          path: "Deposits",
-          element: <DepositRequestsList />,
-        },
-        {
-          path: "withdrawals",
-          element: <WithdrawalRequestsList />,
+          path: "admin",
+          element: <DashboardLayout />,
+          children: [
+            {
+              index: true,
+              element: <UsersList />,
+            },
+            {
+              path: "Deposits",
+              element: <DepositRequestsList />,
+            },
+            {
+              path: "withdrawals",
+              element: <WithdrawalRequestsList />,
+            },
+          ],
         },
       ],
     },

@@ -23,7 +23,7 @@ import { capitalizeFirstLettersOfName } from "@/lib/helpers";
 
 export function NavUser() {
   const { isMobile } = useSidebar();
-  const { user } = useAuth();
+  const { user, userImage } = useAuth();
   const navigate = useNavigate();
 
   return (
@@ -36,7 +36,10 @@ export function NavUser() {
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage src={user?.photoURL} alt={user?.displayName} />
+                <AvatarImage
+                  src={userImage || user?.photoURL}
+                  alt={user?.displayName}
+                />
                 <AvatarFallback className="rounded-lg">
                   {capitalizeFirstLettersOfName(user?.displayName)}
                 </AvatarFallback>

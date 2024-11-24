@@ -9,9 +9,10 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import "react-responsive-modal/styles.css";
 import { Toaster } from "@/components/ui/sonner";
 // connectkit
-import { WagmiProvider, createConfig, http } from "wagmi";
+import { WagmiProvider, createConfig } from "wagmi";
 import { mainnet, polygon, optimism, arbitrum } from "wagmi/chains";
 import { ConnectKitProvider, getDefaultConfig } from "connectkit";
+import AuthProvider from "@/context/auth/AuthProvider";
 
 const config = createConfig(
   getDefaultConfig({
@@ -48,9 +49,11 @@ createRoot(document.getElementById("root")).render(
         <QueryClientProvider client={queryClient}>
           <ReactQueryDevtools initialIsOpen={false} />
           <ConnectKitProvider>
-            <RouterProvider router={router} />
+            <AuthProvider>
+              <RouterProvider router={router} />
+              <Toaster position="top-right" richColors />
+            </AuthProvider>
           </ConnectKitProvider>
-          <Toaster position="top-right" richColors />
         </QueryClientProvider>
       </WagmiProvider>
     </ThemeProvider>
