@@ -3,21 +3,21 @@ import { GiHamburgerMenu } from "react-icons/gi";
 import { ImCross } from "react-icons/im";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { useAuth } from "../../context/auth/use-auth";
 import { useNavigate } from "react-router-dom";
 import { signOut } from "firebase/auth";
 import { auth } from "../../services/firebase";
+import { useLocation } from "react-router-dom";
 
 function MobileNav() {
-  const { user, setUser } = useAuth();
   const [isMenuVisible, setIsMenuVisible] = useState(false);
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const path = pathname.split("/");
 
   const logout = async () => {
     try {
       await signOut(auth);
       localStorage.clear();
-      setUser("");
       setIsMenuVisible(false);
       navigate("/");
     } catch (error) {
@@ -71,7 +71,7 @@ function MobileNav() {
           ))}
         </ul>
         <div className="flex items-center flex-col md:flex-row px-5 md:px-0 gap-4 w-full md:w-auto md:border-l-2 md:border-slate-200 md:border-solid md:ml-6 md:pl-6 ">
-          {!user ? (
+          {!path.includes("admin") || !path.includes("user") ? (
             <>
               {[
                 { title: "sign up", path: "register" },
