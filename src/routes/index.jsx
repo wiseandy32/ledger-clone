@@ -3,7 +3,6 @@ import Layout from "../layout";
 import Landing from "../pages/Landing";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
-import ProtectedRoutes from "./ProtectedRoutes";
 import { redirect } from "react-router-dom";
 import ForgotPassword from "../pages/ForgotPassword";
 import NotFoundError from "@/pages/NotFound";
@@ -54,87 +53,88 @@ const router = createBrowserRouter(
       ],
     },
     {
-      loader: ({ request }) => {
+      loader: async ({ request }) => {
         const uid = localStorage.getItem("id");
         const from = "/" + request.url.split("/").slice(3).join("/");
-
         if (!uid) {
           return redirect("/login", { state: { from } });
         }
         return null;
+        // return userDetailsLoader(queryClient, uid);
       },
-      element: <ProtectedRoutes />,
+      path: "/user",
+      element: <DashboardLayout />,
       errorElement: <NotFoundError />,
+      // children: [
+      //   {
+      //     path: "user",
+      // element: <DashboardLayout />,
       children: [
         {
-          path: "user",
-          element: <DashboardLayout />,
-          children: [
-            {
-              index: true,
-              element: <UserDashboard />,
-            },
-            {
-              path: "profile",
-              element: <UserProfile />,
-            },
-            {
-              path: "deposit",
-              element: <Deposit />,
-            },
-            {
-              path: "withdraw",
-              element: <Withdrawal />,
-            },
-            {
-              path: "deposit/:gateway",
-              loader: ({ params }) => {
-                const [data] = paymentGateways.filter(
-                  (gateway) => gateway.type === params.gateway
-                );
-
-                if (!data) {
-                  return null;
-                }
-
-                return data;
-              },
-              element: <GateWay />,
-            },
-          ],
+          index: true,
+          element: <UserDashboard />,
         },
         {
-          loader: async () => {
-            const uid = localStorage.getItem("id");
+          path: "profile",
+          element: <UserProfile />,
+        },
+        {
+          path: "deposit",
+          element: <Deposit />,
+        },
+        {
+          path: "withdraw",
+          element: <Withdrawal />,
+        },
+        {
+          path: "deposit/:gateway",
+          loader: ({ params }) => {
+            const [data] = paymentGateways.filter(
+              (gateway) => gateway.type === params.gateway
+            );
 
-            if (!uid) {
+            if (!data) {
               return null;
             }
 
-            const user = await fetchUserByID(uid);
-            if (!user.isAdmin) {
-              return redirect("/user");
-            }
-            return user;
+            return data;
           },
-          path: "admin",
-          element: <DashboardLayout />,
-          children: [
-            {
-              index: true,
-              element: <UsersList />,
-            },
-            {
-              path: "Deposits",
-              element: <DepositRequestsList />,
-            },
-            {
-              path: "withdrawals",
-              element: <WithdrawalRequestsList />,
-            },
-          ],
+          element: <GateWay />,
         },
       ],
+    },
+    {
+      loader: async () => {
+        const uid = localStorage.getItem("id");
+
+        if (!uid) {
+          return null;
+        }
+
+        const user = await fetchUserByID(uid);
+        if (!user.isAdmin) {
+          return redirect("/user");
+        }
+        return user;
+      },
+      path: "admin",
+      element: <DashboardLayout />,
+      children: [
+        {
+          index: true,
+          element: <UsersList />,
+        },
+        {
+          path: "Deposits",
+          element: <DepositRequestsList />,
+        },
+        {
+          path: "withdrawals",
+          element: <WithdrawalRequestsList />,
+        },
+      ],
+      // },
+      // ],
     },
   ],
   {

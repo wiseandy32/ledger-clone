@@ -11,7 +11,6 @@ export const createUser = async (email, password, onError) => {
     await createUserWithEmailAndPassword(auth, email, password);
   } catch (error) {
     const { code } = error;
-    console.log(code);
     if (code === "auth/email-already-in-use") {
       onError("An account with this email already exists.");
     }

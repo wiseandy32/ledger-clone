@@ -139,13 +139,13 @@ export const chooseUsCardInfo = [
 ];
 
 export const wallets = [
-  { name: "Ledger", icon: DollarSign, balance: 0 },
-  { name: "BTC", icon: btcIcon, balance: 0 },
-  { name: "ETH", icon: ethIcon, balance: 0 },
-  { name: "USDT", icon: usdtIcon, balance: 0 },
-  { name: "XLM", icon: xlmIcon, balance: 0 },
-  { name: "XRP", icon: xrpIcon, balance: 0 },
-  { name: "DOGE", icon: dogeIcon, balance: 0 },
+  { name: "Ledger", icon: DollarSign, balance: 0, value: "ledger_balance" },
+  { name: "BTC", icon: btcIcon, balance: 0, value: "BTC_balance" },
+  { name: "ETH", icon: ethIcon, balance: 0, value: "ETH_balance" },
+  { name: "USDT", icon: usdtIcon, balance: 0, value: "USDT_balance" },
+  { name: "XLM", icon: xlmIcon, balance: 0, value: "XLM_balance" },
+  { name: "XRP", icon: xrpIcon, balance: 0, value: "XRP_balance" },
+  { name: "DOGE", icon: dogeIcon, balance: 0, value: "DOGE_balance" },
   { name: "LTC", icon: ltcIcon, balance: 0 },
   { name: "ALGO", icon: algoIcon, balance: 0 },
   { name: "SOL", icon: solIcon, balance: 0 },
@@ -156,7 +156,12 @@ export const wallets = [
   { name: "FILECoin", icon: fileCoinIcon, balance: 0 },
   { name: "NANO", icon: nanoIcon, balance: 0 },
   { name: "SHIBA", icon: shibaIcon, balance: 0 },
-  { name: "Total Withdrawals", icon: thetaIcon, balance: 0 },
+  {
+    name: "Total Withdrawals",
+    icon: thetaIcon,
+    balance: 0,
+    value: "withdrawal_balance",
+  },
 ];
 
 export const depositMethods = [
@@ -170,21 +175,21 @@ export const depositMethods = [
 
 export const paymentGateways = [
   {
-    type: "bitcoin",
+    type: "Bitcoin",
     value: "BTC_balance",
     qrCode: bitcoinQRCode,
     icon: btcIcon,
     walletAddress: "bc1qx4np0tgsl0ys7jcqes4cva9y40wjhf5nfhv066",
   },
   {
-    type: "xrp",
+    type: "XRP",
     value: "XRP_balance",
     qrCode: xrpQRCode,
     icon: xrpIcon,
     walletAddress: "r9VvmZmL7VASmBb8p3ByjnjxdKJ62BQme1",
   },
   {
-    type: "xlm",
+    type: "XLM",
     value: "XLM_balance",
     qrCode: xlmQRCode,
     icon: xlmIcon,
@@ -198,7 +203,7 @@ export const paymentGateways = [
     walletAddress: "0xFb23Bf97A6e70A978F8dC518EC7d83E57aad7584",
   },
   {
-    type: "usdt",
+    type: "USDT",
     value: "USDT_balance",
     extra: "(TRC20)",
     qrCode: usdtQRCode,

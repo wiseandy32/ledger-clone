@@ -5,7 +5,6 @@ import { useEffect } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../services/firebase";
 import { useQuery } from "@tanstack/react-query";
-// import { userDetailQuery } from "@/loaders/user-loader";
 import { fetchUserByID } from "@/lib/helpers";
 
 function AuthProvider({ children }) {
@@ -23,10 +22,10 @@ function AuthProvider({ children }) {
       const user = await fetchUserByID(uid);
       return user;
     },
-    staleTime: Infinity,
+    // staleTime: Infinity,
   });
   // const [user, setUser] = useState({});
-  // TODO: profile not showing
+
   const values = {
     user,
     uid,

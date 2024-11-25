@@ -1,9 +1,6 @@
 import { auth } from "../services/firebase";
 import { useState } from "react";
-import {
-  fetchSignInMethodsForEmail,
-  sendPasswordResetEmail,
-} from "firebase/auth";
+import { sendPasswordResetEmail } from "firebase/auth";
 import MessageCard from "./components/MessageCard";
 
 function ForgotPassword() {
@@ -13,8 +10,6 @@ function ForgotPassword() {
     e.preventDefault();
     const formData = new FormData(e.target);
     const email = formData.get("email");
-    const hmm = fetchSignInMethodsForEmail(auth, email);
-    console.log(hmm);
     try {
       await sendPasswordResetEmail(auth, email, {
         url: "https://ledger-two-olive.vercel.app/login",

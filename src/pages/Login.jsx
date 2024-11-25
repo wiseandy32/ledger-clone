@@ -25,7 +25,6 @@ function Login() {
       const formData = new FormData(e.target);
       const email = formData.get("email");
       const password = formData.get("password");
-      console.log(email, password);
       const { user } = await signInWithEmailAndPassword(auth, email, password);
       const userDoc = await getSingleDocument("uid", user.uid);
 
@@ -36,12 +35,12 @@ function Login() {
         return;
       }
 
-      // if (!user.emailVerified) {
-      //   signOut(auth);
-      //   return setError(
-      //     "Email verification is required. Please verify your email to proceed"
-      //   );
-      // }
+      if (!user.emailVerified) {
+        signOut(auth);
+        return setError(
+          "Email verification is required. Please verify your email to proceed"
+        );
+      }
       navigate(state?.from || "/user");
     } catch (error) {
       const { code } = error;

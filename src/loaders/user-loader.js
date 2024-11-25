@@ -8,7 +8,6 @@ export const userDetailQuery = (uid) => ({
 
 export const userDetailsLoader = (queryClient, uid) => async () => {
   const query = userDetailQuery(uid);
-  console.log("detail");
   return (
     queryClient.getQueryData(query.queryKey) ??
     (await queryClient.fetchQuery(query))

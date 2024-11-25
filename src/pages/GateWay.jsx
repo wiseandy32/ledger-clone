@@ -39,7 +39,7 @@ function GateWay() {
     const depositRequestInfo = {
       uid: auth.currentUser.uid,
       method: data.value,
-      coinType: data.type,
+      coin: data.type,
       name: auth.currentUser.displayName,
       amount: formData.get("depositAmount"),
       email: auth.currentUser.email,
@@ -47,8 +47,7 @@ function GateWay() {
     };
 
     try {
-      const ref = await addDataToDb("depositRequests", depositRequestInfo);
-      console.log(ref.id);
+      await addDataToDb("depositRequests", depositRequestInfo);
       setAmountDeposited("");
     } catch (error) {
       console.error(error);
