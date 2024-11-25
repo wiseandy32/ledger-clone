@@ -9,8 +9,6 @@ import { fetchUserByID } from "@/lib/helpers";
 
 function AuthProvider({ children }) {
   const [uid, setUid] = useState("");
-  // const [uid, setUid] = useState("");
-  // const { data: user } = useQuery(userDetailQuery(uid));
   const [userImage, setUserImage] = useState(
     JSON.parse(localStorage.getItem("dp")) ||
       auth?.currentUser?.photoURL ||
@@ -24,7 +22,6 @@ function AuthProvider({ children }) {
     },
     // staleTime: Infinity,
   });
-  // const [user, setUser] = useState({});
 
   const values = {
     user,

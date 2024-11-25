@@ -1,11 +1,11 @@
 import { Link } from "react-router-dom";
 import MobileNav from "../pages/components/MobileNav";
 import logo from "../assets/logo.png";
-import { useAuth } from "../context/auth/use-auth";
+import { useLocation } from "react-router-dom";
 
 function Header() {
-  const { user } = useAuth();
-
+  const { pathname } = useLocation();
+  const path = pathname.split("/");
   return (
     <>
       <header className="flex items-center px-2 md:px-5 justify-between h-20 text-slate-200 font-semibold text-sm fixed pt-6 leading-6 w-full bg-[#0B1120] z-[1000]">
@@ -17,8 +17,8 @@ function Header() {
           <ul className="flex flex-col md:flex-row justify-center md:w-auto w-full items-center gap-4">
             {[
               { title: "home", path: "/" },
-              { title: "about", path: "about" },
-              { title: "services", path: "contact" },
+              { title: "about", path: "/" },
+              { title: "services", path: "/" },
             ].map((link) => (
               <li
                 key={link.title}
@@ -28,7 +28,7 @@ function Header() {
               </li>
             ))}
           </ul>
-          {Object.keys(user ? user : {}).length === 0 ? (
+          {!path.includes("admin") || !path.includes("user") ? (
             <div className="flex items-center flex-col md:flex-row px-5 md:px-0 gap-4 w-full md:w-auto md:border-l-2 md:border-slate-200 md:border-solid md:ml-6 md:pl-6 ">
               {[
                 { title: "sign up", path: "register" },

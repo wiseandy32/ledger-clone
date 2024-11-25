@@ -22,10 +22,9 @@ const router = createBrowserRouter(
   [
     {
       path: "/",
-      loader: ({ request }) => {
+      loader: () => {
         const uid = localStorage.getItem("id");
-        const path = request.url.split("/").pop().toLowerCase();
-        if (uid && ["register", "login"].includes(path)) {
+        if (uid) {
           return redirect("/user");
         }
 
@@ -60,15 +59,10 @@ const router = createBrowserRouter(
           return redirect("/login", { state: { from } });
         }
         return null;
-        // return userDetailsLoader(queryClient, uid);
       },
       path: "/user",
       element: <DashboardLayout />,
       errorElement: <NotFoundError />,
-      // children: [
-      //   {
-      //     path: "user",
-      // element: <DashboardLayout />,
       children: [
         {
           index: true,
@@ -133,8 +127,6 @@ const router = createBrowserRouter(
           element: <WithdrawalRequestsList />,
         },
       ],
-      // },
-      // ],
     },
   ],
   {
