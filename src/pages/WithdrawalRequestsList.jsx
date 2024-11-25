@@ -86,7 +86,7 @@ function WithdrawalRequestsList() {
                     {doc.isConfirmed ? "Approved" : "Pending"}
                   </Badge>
                 </TableCell>
-                <TableCell className="capitalize">{doc.method}</TableCell>
+                <TableCell className="capitalize">{doc?.coin}</TableCell>
                 <TableCell>{doc.walletAddress}</TableCell>
                 <TableCell className="text-right">{doc.amount}</TableCell>
                 <TableCell className="text-center flex gap-2 pl-9 w-fit">

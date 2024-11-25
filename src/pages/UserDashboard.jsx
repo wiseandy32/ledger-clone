@@ -1,30 +1,34 @@
 import { useAuth } from "@/context/auth/use-auth";
 import { useTheme } from "@/context/theme-provider";
 import { wallets } from "@/data";
-import { db } from "@/services/firebase";
-import { doc, onSnapshot } from "firebase/firestore";
-import { useEffect, useState } from "react";
 import { CryptoCurrencyMarket } from "react-ts-tradingview-widgets";
+
+const availableWallets = [
+  "BTC_balance",
+  "XRP_balance",
+  "XLM_balance",
+  "ETH_balance",
+  "USDT_balance",
+  "DOGE_balance",
+  "withdrawal_balance",
+  "ledger_balance",
+];
 
 function UserDashboard() {
   const { user } = useAuth();
   const { theme } = useTheme();
-  const [dashboardWallets, setDashboardWallets] = useState(wallets);
 
-  useEffect(() => {
-    const getLatestChanges = onSnapshot(
-      doc(db, "users", user?.docRef),
-      (doc) => {
-        // TODO: merge with existing data.
-        const data = doc.data();
-        console.log(data);
-        // const currentDocs = [];
-        // doc.forEach((d) => currentDocs.push(d.data()));
-        // setDocs(currentDocs);
-      }
-    );
-    return () => getLatestChanges();
-  }, [user?.docRef]);
+  const dashboardWallets = wallets.map((wallet) => {
+    if (availableWallets.includes(wallet.value) && user) {
+      const amount = user[wallet.value];
+      return {
+        ...wallet,
+        balance: amount ? wallet.balance + +amount : wallet.balance,
+      };
+    } else {
+      return wallet;
+    }
+  });
 
   return (
     <>
@@ -58,7 +62,7 @@ function UserDashboard() {
               )}
             </div>
             <div>
-              <p className="font-bold">{user?.ledger_balance || "$0.00"}</p>
+              <p className="font-bold">{`$${wallet.balance || "0.00"}`}</p>
               <p>
                 {wallet.name}{" "}
                 {!wallet.name.includes("Withdrawal") ? "Balance" : ""}

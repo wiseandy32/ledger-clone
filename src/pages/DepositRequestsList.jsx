@@ -80,7 +80,7 @@ function DepositRequestsList() {
                     {doc.isConfirmed ? "Confirmed" : "Pending"}
                   </Badge>
                 </TableCell>
-                <TableCell className="capitalize">{doc.coinType}</TableCell>
+                <TableCell className="capitalize">{doc?.coin}</TableCell>
                 <TableCell className="text-right">{doc?.amount}</TableCell>
                 <TableCell className="text-center flex gap-2 pl-9 w-fit">
                   <DropdownMenu>

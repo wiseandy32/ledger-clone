@@ -9,44 +9,58 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useAuth } from "@/context/auth/use-auth";
 import { withdrawalOptions } from "@/data";
 import { auth } from "@/services/firebase";
 import { addDataToDb } from "@/utils/auth";
 import { Label } from "@radix-ui/react-dropdown-menu";
+import { Loader2 } from "lucide-react";
 import { Check } from "lucide-react";
 import { useState } from "react";
 import Modal from "react-responsive-modal";
 import { Link } from "react-router-dom";
 
 function Withdrawal() {
+  const { user } = useAuth();
   const [errorMessage, setErrorMessage] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const formData = new FormData(e.target);
-
-    // if (+formData.get("amount") > 0) {
-    //   setErrorMessage(
-    //     "Insufficient Balance: Please ensure you have enough funds to complete this transaction."
-    //   );
-    // }
-
-    const withdrawalRequestInfo = {
-      uid: auth.currentUser.uid,
-      method: formData.get("WithdrawalMethod"),
-      name: auth.currentUser.displayName,
-      amount: formData.get("amount"),
-      walletAddress: formData.get("walletAddress"),
-      email: auth.currentUser.email,
-      isConfirmed: false,
-    };
 
     try {
+      setIsSubmitting(true);
+
+      const formData = new FormData(e.target);
+      const availableBalance = user[formData.get("WithdrawalMethod")];
+      const withdrawalMethod = formData.get("WithdrawalMethod").split("_");
+
+      if (!availableBalance || +formData.get("amount") > +availableBalance) {
+        setErrorMessage(
+          "Insufficient Balance: Please ensure you have enough funds to complete this transaction."
+        );
+        setIsSubmitting(false);
+        return;
+      }
+
+      const withdrawalRequestInfo = {
+        uid: auth.currentUser.uid,
+        method: formData.get("WithdrawalMethod"),
+        coin: withdrawalMethod[0],
+        name: auth.currentUser.displayName,
+        amount: formData.get("amount"),
+        walletAddress: formData.get("walletAddress"),
+        email: auth.currentUser.email,
+        isConfirmed: false,
+      };
+
       await addDataToDb("withdrawalRequests", withdrawalRequestInfo);
       setIsOpen(true);
+      setIsSubmitting(false);
     } catch (error) {
       console.error(error);
+      setIsSubmitting(false);
     }
   };
 
@@ -116,7 +130,10 @@ function Withdrawal() {
             required
           />
         </div>
-        <Button variant="gooeyLeft">Complete Request</Button>
+        <Button disabled={isSubmitting} variant="gooeyLeft">
+          {!isSubmitting ? null : <Loader2 className="animate-spin mr-2" />}
+          {!isSubmitting ? "Submit" : "Submitting"}
+        </Button>
       </form>
       <Modal
         classNames={{

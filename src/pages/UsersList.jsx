@@ -37,7 +37,6 @@ function UsersList() {
     return () => getLatestChanges();
   }, []);
 
-  console.log(docs);
   return (
     <>
       <div>

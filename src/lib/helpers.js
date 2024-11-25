@@ -54,7 +54,7 @@ export const filterCountries = (
     : filteredCountries;
 };
 
-export const getSingleDocument = async (queryKey = "email", uid) => {
+export const getSingleDocument = async (uid, queryKey = "uid") => {
   const usersRef = collection(db, "users");
   const document = query(usersRef, where(`${queryKey}`, "==", uid));
 
@@ -72,7 +72,7 @@ export const getSingleDocument = async (queryKey = "email", uid) => {
 export const fetchUserByID = async (uid) => {
   if (!uid) return false;
   const currentUser = auth.currentUser;
-  const userDoc = await getSingleDocument("uid", uid);
+  const userDoc = await getSingleDocument(uid);
   const user = { ...currentUser, ...userDoc };
   // changeUserID(user.uid);
   return user;
@@ -99,8 +99,6 @@ export const handleFileSelect = async (file, changeImage) => {
     });
     await updateFirebaseDb("users", userDetail.docRef, { photo: base64String });
     localStorage.setItem("dp", JSON.stringify(base64String));
-
-    console.log("Profile photo updated successfully:", base64String);
   } catch (error) {
     console.error("Error updating profile photo:", error.message);
   }
@@ -132,7 +130,7 @@ export const handleRequestApproval = (doc, requestType, documentId) => {
         action: {
           label: "Confirm",
           onClick: async () => {
-            const document = await getSingleDocument(doc?.email);
+            const document = await getSingleDocument(doc?.uid);
 
             // const field = `${doc.coinType}_balance`;
             await updateFirebaseDb("users", document.docRef, {
@@ -166,7 +164,7 @@ export const handleRequestApproval = (doc, requestType, documentId) => {
       action: {
         label: "Confirm",
         onClick: async () => {
-          const document = await getSingleDocument(doc?.email);
+          const document = await getSingleDocument(doc?.uid);
 
           await updateFirebaseDb("users", document.docRef, {
             [`${doc.method}`]: increment(
@@ -174,6 +172,10 @@ export const handleRequestApproval = (doc, requestType, documentId) => {
             ),
             ledger_balance: increment(
               requestType === "deposit" ? doc.amount : -doc.amount
+            ),
+
+            withdrawal_balance: increment(
+              requestType === "withdrawal" ? doc.amount : 0
             ),
           });
 
