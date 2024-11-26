@@ -30,6 +30,8 @@ import xrpQRCode from "@/assets/xrp-qr.jpg";
 import xlmQRCode from "@/assets/xlm-qr.jpg";
 import usdtQRCode from "@/assets/usdt-trc20-qr.jpg";
 import dogeQRCode from "@/assets/doge-qr.jpg";
+import algoQRCode from "@/assets/algo-qr.jpg";
+import solQRCode from "@/assets/sol-qr.jpg";
 import { DollarSign } from "lucide-react";
 
 export const registrationFormField = [
@@ -147,8 +149,8 @@ export const wallets = [
   { name: "XRP", icon: xrpIcon, balance: 0, value: "XRP_balance" },
   { name: "DOGE", icon: dogeIcon, balance: 0, value: "DOGE_balance" },
   { name: "LTC", icon: ltcIcon, balance: 0 },
-  { name: "ALGO", icon: algoIcon, balance: 0 },
-  { name: "SOL", icon: solIcon, balance: 0 },
+  { name: "ALGO", icon: algoIcon, balance: 0, value: "ALGO_balance" },
+  { name: "SOL", icon: solIcon, balance: 0, value: "SOL_balance" },
   { name: "BNB", icon: bnbIcon, balance: 0 },
   { name: "QTUM", icon: qtumIcon, balance: 0 },
   { name: "TEZOS", icon: tezosIcon, balance: 0 },
@@ -171,6 +173,8 @@ export const depositMethods = [
   { name: "XLM", icon: xlmIcon, path: "xlm" },
   { name: "USDT TRC20", icon: usdtIcon, path: "usdt" },
   { name: "DOGEcoin", icon: dogeIcon, path: "dogecoin" },
+  {name: "ALGO", icon: algoIcon, path: "algo" },
+  {name: "Solana", icon: solIcon, path: "sol"}
 ];
 
 export const paymentGateways = [
@@ -217,6 +221,18 @@ export const paymentGateways = [
     icon: dogeIcon,
     walletAddress: "DLFyTv52jgjptxXxzwaDwUQUYAZ72vZjKE",
   },
+  {
+    type: "Sol",
+    value: "SOL_balance",
+    qrCode: solQRCode,
+    walletAddress: "BsfZQAEfvbkxfDQFFGqXfQNVV7y8L6rCprs7MY3VykSf"
+  },
+  {
+    type: "Algo",
+    value: "ALGO_balance",
+    qrCode: algoQRCode,
+    walletAddress: "YCAFLK3SGL4EHGKI7FG2NBWP5JWCMNID3PINF5F3QLQXJMOKRC4SDA36TM"
+  }
 ];
 
 export const withdrawalOptions = [
@@ -250,11 +266,11 @@ export const withdrawalOptions = [
   },
   {
     title: "ALGORAND",
-    value: "algorand_balance",
+    value: "ALGO_balance",
   },
   {
     title: "SOLANA",
-    value: "solana_balance",
+    value: "SOL_balance",
   },
   {
     title: "BNB",
