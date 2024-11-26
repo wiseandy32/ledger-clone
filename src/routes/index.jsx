@@ -84,7 +84,7 @@ const router = createBrowserRouter(
           path: "deposit/:gateway",
           loader: ({ params }) => {
             const [data] = paymentGateways.filter(
-              (gateway) => gateway.type === params.gateway
+              (gateway) => gateway.type.toLowerCase() === params.gateway.toLowerCase()
             );
 
             if (!data) {
