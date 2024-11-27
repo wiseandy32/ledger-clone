@@ -3,6 +3,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { useAuth } from "@/context/auth/use-auth";
 import { LayoutGrid } from "lucide-react";
@@ -11,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 
 export function NavMain({ items }) {
+  const { setOpenMobile } = useSidebar();
   const { user } = useAuth();
   const { pathname } = useLocation();
   const navigate = useNavigate();
@@ -24,7 +26,10 @@ export function NavMain({ items }) {
           <SidebarMenuButton
             className="pl-12 py-7 text-lg"
             isActive={item.url.includes(currentPath)}
-            onClick={() => navigate(item.url)}
+            onClick={() => {
+              navigate(item.url);
+              setOpenMobile(false);
+            }}
           >
             {item.icon && <item.icon />}
             {item.title}
@@ -37,9 +42,10 @@ export function NavMain({ items }) {
           <SidebarMenuButton
             isActive={false}
             className="pl-12 py-7 text-lg"
-            onClick={() =>
-              navigate(!paths.includes("admin") ? "/admin" : "/user")
-            }
+            onClick={() => {
+              navigate(!paths.includes("admin") ? "/admin" : "/user");
+              setOpenMobile(false);
+            }}
           >
             {!paths.includes("admin") ? (
               <MdAdminPanelSettings />
