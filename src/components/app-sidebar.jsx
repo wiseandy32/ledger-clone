@@ -39,7 +39,7 @@ const data = {
       icon: User2,
     },
     {
-      title: "Deposit Request",
+      title: "Deposits",
       url: "deposits",
       icon: Download,
     },
