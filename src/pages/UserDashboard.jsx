@@ -33,7 +33,7 @@ function UserDashboard() {
   return (
     <>
       <div className="">
-        <h1 className="text-2xl md:text-4xl font-bold">
+        <h1 className="text-2xl md:text-4xl font-bold capitalize">
           Welcome, {user?.name}
         </h1>
         <p className="md:mt-2 text-sm">
