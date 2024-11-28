@@ -17,12 +17,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { handleRequestApproval } from "@/lib/helpers";
+import { deleteDocumentFromDB, handleRequestApproval } from "@/lib/helpers";
 import { db } from "@/services/firebase";
 import { collection, onSnapshot } from "firebase/firestore";
 import { MoreHorizontal } from "lucide-react";
 import { useState } from "react";
 import { useEffect } from "react";
+import { toast } from "sonner";
 
 function DepositRequestsList() {
   const [docs, setDocs] = useState([]);
@@ -64,24 +65,24 @@ function DepositRequestsList() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {docs.map((doc) => (
-              <TableRow key={doc.docRef}>
+            {docs.map((request) => (
+              <TableRow key={request.docRef}>
                 <TableCell className="font-medium">
-                  {doc.docRef.slice(1, 8)}
+                  {request.docRef.slice(1, 8)}
                 </TableCell>
-                <TableCell className="font-medium">{doc.name}</TableCell>
+                <TableCell className="font-medium">{request.name}</TableCell>
                 <TableCell>
                   <Badge
                     variant={"outline"}
                     className={`${
-                      doc.isConfirmed && "text-green-500 border-green-500"
+                      request.isConfirmed && "text-green-500 border-green-500"
                     }`}
                   >
-                    {doc.isConfirmed ? "Confirmed" : "Pending"}
+                    {request.isConfirmed ? "Confirmed" : "Pending"}
                   </Badge>
                 </TableCell>
-                <TableCell className="capitalize">{doc?.coin}</TableCell>
-                <TableCell className="text-right">{doc?.amount}</TableCell>
+                <TableCell className="capitalize">{request?.coin}</TableCell>
+                <TableCell className="text-right">{request?.amount}</TableCell>
                 <TableCell className="text-center flex gap-2 pl-9 w-fit">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -96,15 +97,49 @@ function DepositRequestsList() {
                       <DropdownMenuItem
                         onClick={() =>
                           handleRequestApproval(
-                            doc,
+                            request,
                             "deposit",
                             "depositRequests"
                           )
                         }
                       >
-                        {!doc.isConfirmed
+                        {!request.isConfirmed
                           ? "Approve Request"
                           : "UnApprove Request"}
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={async () => {
+                          try {
+                            toast.warning(
+                              `Are you sure you want to delete ${request.name} deposit request? This action is irreversible`,
+                              {
+                                duration: Infinity,
+                                cancel: {
+                                  label: "Cancel",
+                                  onClick: () => {
+                                    return;
+                                  },
+                                },
+                                action: {
+                                  label: "Confirm",
+                                  onClick: async () => {
+                                    await deleteDocumentFromDB(
+                                      "depositRequests",
+                                      request.docRef
+                                    );
+                                    toast.success(
+                                      `${request.name} deposit request has been deleted.`
+                                    );
+                                  },
+                                },
+                              }
+                            );
+                          } catch (error) {
+                            console.error(error);
+                          }
+                        }}
+                      >
+                        Delete Request
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>

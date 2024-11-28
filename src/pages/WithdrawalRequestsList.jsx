@@ -17,12 +17,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { handleRequestApproval } from "@/lib/helpers";
+import { deleteDocumentFromDB, handleRequestApproval } from "@/lib/helpers";
 import { db } from "@/services/firebase";
 import { collection, onSnapshot } from "firebase/firestore";
 import { MoreHorizontalIcon } from "lucide-react";
 import { useState } from "react";
 import { useEffect } from "react";
+import { toast } from "sonner";
 
 function WithdrawalRequestsList() {
   const [docs, setDocs] = useState([]);
@@ -112,6 +113,40 @@ function WithdrawalRequestsList() {
                         {!doc.isConfirmed
                           ? "Approve Request"
                           : "UnApprove Request"}
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={async () => {
+                          try {
+                            toast.warning(
+                              `Are you sure you want to delete ${doc.name} deposit request? This action is irreversible`,
+                              {
+                                duration: Infinity,
+                                cancel: {
+                                  label: "Cancel",
+                                  onClick: () => {
+                                    return;
+                                  },
+                                },
+                                action: {
+                                  label: "Confirm",
+                                  onClick: async () => {
+                                    await deleteDocumentFromDB(
+                                      "withdrawalRequests",
+                                      doc.docRef
+                                    );
+                                    toast.success(
+                                      `${doc.name} withdrawal request has been deleted.`
+                                    );
+                                  },
+                                },
+                              }
+                            );
+                          } catch (error) {
+                            console.error(error);
+                          }
+                        }}
+                      >
+                        Delete Request
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
