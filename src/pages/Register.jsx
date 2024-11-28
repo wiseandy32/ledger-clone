@@ -9,10 +9,11 @@ import MessageCard from "./components/MessageCard";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { useEffect } from "react";
 
 function Register() {
   const [error, setError] = useState("");
-  const [isVerificationLinkSent, setIsVerificationLinkSent] = useState("");
+  const [isVerificationLinkSent, setIsVerificationLinkSent] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const onSubmit = async (e) => {
@@ -53,8 +54,12 @@ function Register() {
     setIsSubmitting(false);
   };
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+
   return (
-    <section className="px-3 mt-[14vh] mb-[10vh] bg-bottom bg-no-repeat bottom-10">
+    <section className=" px-3 mt-[14vh] mb-[10vh] bg-bottom bg-no-repeat bottom-10">
       {!isVerificationLinkSent ? (
         <div className="md:flex md:justify-between md:items-center max-w-[1200px] md:m-auto md:p-5">
           <div className="hidden md:block w-[45%]">
