@@ -10,6 +10,8 @@ import { capitalizeFirstLettersOfName, handleFileSelect } from "@/lib/helpers";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import { auth } from "@/services/firebase";
+import { updatePassword } from "firebase/auth";
+import { Loader2 } from "lucide-react";
 
 function UserProfile() {
   const [country, setCountry] = useState("");
@@ -19,7 +21,14 @@ function UserProfile() {
   // );
   const [isNotEditing, setIsNotEditing] = useState(true);
   const [isTouched, setIsTouched] = useState(false);
+  const [isPasswordFieldTouched, setIsPasswordFieldTouched] = useState(false);
   const [count, setCount] = useState(0);
+  const [error, setError] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
+  const [isPasswordFieldDisabled, setIsPasswordFieldDisabled] = useState(true);
+  const [passwordFieldCount, setPasswordFieldCount] = useState(0);
+  const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
   const qc = useQueryClient();
   // TODO: finish this component: add region and postal id
   const fileInputRef = useRef(null);
@@ -39,9 +48,9 @@ function UserProfile() {
     try {
       const reader = new FileReader();
 
-      // reader.onload = () => {
-      //   setUserImage(reader.result);
-      // };
+      reader.onload = () => {
+        setUserImage(reader.result);
+      };
       // setUserImage(reader.result);
       await handleFileSelect(file, (img) => setUserImage(img));
       qc.invalidateQueries({ queryKey: ["uid"] });
@@ -229,6 +238,117 @@ function UserProfile() {
             </div>
           </div>
         </fieldset>
+        <div className="mt-5">
+          <div className="bg-muted/50 p-5 rounded-md flex items-center gap-2 border-b-2 border-solid border-sidebar-border">
+            <h3>Change Password</h3>
+            <div className=" ml-auto">
+              <Button
+                type="button"
+                onClick={async (e) => {
+                  e.stopPropagation();
+                  const currentCount = passwordFieldCount + 1;
+                  setIsPasswordFieldDisabled(false);
+                  setPasswordFieldCount((prev) => prev + 1);
+
+                  if (!isPasswordFieldTouched && currentCount % 2 !== 0) {
+                    return;
+                  }
+
+                  if (!newPassword || !confirmNewPassword) {
+                    setError("Password fields cannot be empty");
+                    return;
+                  }
+
+                  try {
+                    if (currentCount % 2 === 0 && isPasswordFieldTouched) {
+                      setIsUpdatingPassword(true);
+
+                      await updatePassword(auth.currentUser, newPassword);
+                      toast.success("Password updated successfully");
+                      setIsUpdatingPassword(false);
+                      setIsPasswordFieldDisabled(true);
+                    }
+                  } catch (error) {
+                    console.error(error);
+                    setIsUpdatingPassword(false);
+                  }
+                }}
+              >
+                {!isUpdatingPassword ? null : (
+                  <Loader2 className="animate-spin mr-2" />
+                )}
+
+                {isPasswordFieldDisabled
+                  ? "Edit"
+                  : !isUpdatingPassword
+                  ? "Submit"
+                  : "Submitting"}
+              </Button>
+            </div>
+          </div>
+          <fieldset
+            className=" bg-muted/50 rounded-md"
+            disabled={isPasswordFieldDisabled}
+          >
+            <div className="px-5 pb-5 pt-5 grid md:grid-cols-2 gap-y-4 items-center">
+              <div className="flex flex-col gap-1 md:w-[45%]">
+                <label htmlFor="newPassword" className="capitalize">
+                  New Password
+                </label>
+                <Input
+                  type="password"
+                  placeholder="Type your new password"
+                  required
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  id="newPassword"
+                  name="newPassword"
+                  minLength={6}
+                  className="py-5"
+                  onBlur={() => {
+                    if (newPassword) {
+                      setIsPasswordFieldTouched(true);
+                    }
+                  }}
+                />
+              </div>
+              <div className="flex flex-col gap-1 md:w-[45%]">
+                <label htmlFor="confirmNewPassword" className="capitalize">
+                  Confirm new Password
+                </label>
+                <Input
+                  type="password"
+                  placeholder="Type your new password"
+                  required
+                  value={confirmNewPassword}
+                  id="confirmNewPassword"
+                  name="confirmPassword"
+                  onChange={(e) => setConfirmNewPassword(e.target.value)}
+                  minLength={6}
+                  onBlur={() => {
+                    if (confirmNewPassword) {
+                      setIsPasswordFieldTouched(true);
+                    }
+
+                    if (newPassword !== confirmNewPassword) {
+                      setError(
+                        "Passwords do not match. Please ensure both fields are identical"
+                      );
+                    } else {
+                      setError("");
+                    }
+                  }}
+                  className="py-5"
+                />
+              </div>
+              {!error ? null : (
+                <p className="text-white bg-red-500 w-full p-2 rounded-md font-semibold">
+                  {error}
+                </p>
+              )}
+            </div>
+          </fieldset>
+        </div>
       </form>
     </>
   );
