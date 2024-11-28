@@ -54,10 +54,21 @@ const router = createBrowserRouter(
     {
       loader: async ({ request }) => {
         const uid = localStorage.getItem("id");
-        const from = "/" + request.url.split("/").slice(3).join("/");
+        const from =
+          "/" +
+          request.url
+            .split("/")
+            .slice(3)
+            .join("/");
         if (!uid) {
           return redirect("/login", { state: { from } });
         }
+
+        const user = await fetchUserByID(uid);
+        if (user.isAdmin) {
+          return redirect("/admin");
+        }
+
         return null;
       },
       path: "/user",
@@ -84,7 +95,8 @@ const router = createBrowserRouter(
           path: "deposit/:gateway",
           loader: ({ params }) => {
             const [data] = paymentGateways.filter(
-              (gateway) => gateway.type.toLowerCase() === params.gateway.toLowerCase()
+              (gateway) =>
+                gateway.type.toLowerCase() === params.gateway.toLowerCase()
             );
 
             if (!data) {
