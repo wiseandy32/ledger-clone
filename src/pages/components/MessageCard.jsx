@@ -12,7 +12,7 @@ function MessageCard({ title, subtext, cta, to }) {
           <p>{subtext}</p>
           <Link
             to={to}
-            className="flex focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50 text-black font-semibold h-12 px-6 rounded-lg w-[fit-content] items-center justify-center sm:w-auto bg-sky-400 highlight-white/20 hover:bg-sky-400 hover:font-bold mt-3 w-full"
+            className="flex focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50 text-black font-semibold h-12 px-6 rounded-lg w-[fit-content] items-center justify-center sm:w-auto bg-sky-400 highlight-white/20 hover:bg-sky-400 hover:font-bold mt-3"
           >
             {cta}
           </Link>
