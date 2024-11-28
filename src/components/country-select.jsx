@@ -29,6 +29,7 @@ function CountrySelect({
       onValueChange={(value) => {
         onChange(value);
       }}
+      id="country"
     >
       <SelectTrigger className={className}>
         <SelectValue placeholder={placeholder} />

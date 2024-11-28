@@ -12,10 +12,12 @@ import { useQueryClient } from "@tanstack/react-query";
 import { auth } from "@/services/firebase";
 import { updatePassword } from "firebase/auth";
 import { Loader2 } from "lucide-react";
+import RegionSelect from "@/components/region-select";
 
 function UserProfile() {
   const [country, setCountry] = useState("");
-  const { user, setUserImage } = useAuth();
+  const [, setRegion] = useState("");
+  const { user, setUserImage, userImage } = useAuth();
   // const [userImage, setUserImage] = useState(
   //   JSON.parse(localStorage.getItem("dp")) || null
   // );
@@ -46,17 +48,22 @@ function UserProfile() {
     if (!file) return;
 
     try {
-      const reader = new FileReader();
+      if (file) {
+        const reader = new FileReader();
 
-      reader.onload = () => {
-        setUserImage(reader.result);
-      };
+        reader.onload = () => {
+          setUserImage(reader.result);
+        };
+
+        reader.readAsDataURL(file);
+      }
+
       // setUserImage(reader.result);
-      await handleFileSelect(file, (img) => setUserImage(img));
-      qc.invalidateQueries({ queryKey: ["uid"] });
+      // await handleFileSelect(file, (img) => setUserImage(img));
+      // qc.invalidateQueries({ queryKey: ["uid"] });
 
-      // Optionally: Reset the file input to allow re-uploading the same file
-      e.target.value = null;
+      // // Optionally: Reset the file input to allow re-uploading the same file
+      // e.target.value = null;
     } catch (error) {
       console.error("Error handling file change:", error);
     }
@@ -80,7 +87,7 @@ function UserProfile() {
         >
           <AvatarImage
             className="object-contain object-center"
-            src={user?.photoURL}
+            src={userImage || user?.photoURL}
           />
           <AvatarFallback>
             {capitalizeFirstLettersOfName(user?.name)}
@@ -201,9 +208,9 @@ function UserProfile() {
           <h3 className="p-5 mb-5 border-b-2 border-solid border-sidebar-border">
             Account Information
           </h3>
-          <div className="px-5 pb-5 grid md:grid-cols-2 gap-y-4 items-center">
-            <div className="grid w-full max-w-sm items-center gap-1.5 md:col-start-1 md:col-end-2">
-              <Label htmlFor="wallet">Country</Label>
+          <div className="px-5 pb-5 grid md:grid-cols-2 gap-4 gap-x-7 items-center">
+            <div className="grid w-full items-center gap-1.5 md:col-start-1 md:col-end-2">
+              <Label htmlFor="country">Country</Label>
               <CountrySelect
                 onBlur={(e) => {
                   if (e.target.value !== "") {
@@ -213,10 +220,24 @@ function UserProfile() {
                 }}
                 onChange={(value) => setCountry(value)}
                 priorityOptions={["US", "UK"]}
-                placeholder="Country"
+                placeholder="Select your country"
               />
             </div>
-            <div className="grid w-full max-w-sm items-center gap-1.5 md:col-start-2 md:col-end-3">
+            <div className="grid w-full items-center gap-1.5 md:col-start-2 md:col-end-3">
+              <Label htmlFor="countryRegion">Region</Label>
+              <RegionSelect
+                countryCode={country}
+                onBlur={(e) => {
+                  if (e.target.value !== "") {
+                    setIsTouched(true);
+                    localStorage.setItem("cr", JSON.stringify(e.target.value));
+                  }
+                }}
+                onChange={(value) => setRegion(value)}
+                placeholder="Select your region"
+              />
+            </div>
+            <div className="grid w-full items-center gap-1.5 md:col-span-full">
               <Label htmlFor="wallet">Wallet Address</Label>
               <Input
                 type="text"
@@ -234,6 +255,7 @@ function UserProfile() {
                   undefined
                 }
                 placeholder="Enter your wallet address"
+                className="w-full"
               />
             </div>
           </div>
@@ -290,8 +312,9 @@ function UserProfile() {
             className=" bg-muted/50 rounded-md"
             disabled={isPasswordFieldDisabled}
           >
-            <div className="px-5 pb-5 pt-5 grid md:grid-cols-2 gap-y-4 items-center">
-              <div className="flex flex-col gap-1 md:w-[45%]">
+            <div className="px-5 pb-5 pt-5 grid md:grid-cols-2 gap-4 items-center">
+              {/* <div className="flex flex-col gap-1 md:w-[45%]"> */}
+              <div className="flex flex-col gap-1 md:col-start-1 md:col-end-2">
                 <label htmlFor="newPassword" className="capitalize">
                   New Password
                 </label>
@@ -312,7 +335,7 @@ function UserProfile() {
                   }}
                 />
               </div>
-              <div className="flex flex-col gap-1 md:w-[45%]">
+              <div className="flex flex-col gap-1 md:col-start-2 md:col-end-3">
                 <label htmlFor="confirmNewPassword" className="capitalize">
                   Confirm new Password
                 </label>
