@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { deleteUserData, getSingleDocument } from "@/lib/helpers";
+import { useEffect } from "react";
 
 function Login() {
   const [error, setError] = useState("");
@@ -54,6 +55,10 @@ function Login() {
       setIsSubmitting(false);
     }
   };
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
 
   return (
     <section className="mt-[16vh] bg-bottom bg-no-repeat bottom-10">
