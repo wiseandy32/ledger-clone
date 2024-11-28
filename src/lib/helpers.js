@@ -234,3 +234,7 @@ export const deleteUserData = async (uid, user) => {
   await deleteUser(user);
   await deleteDoc(doc(db, "users", userDoc.docRef));
 };
+
+export const deleteDocumentFromDB = async (documentName, documentRefID) => {
+  await deleteDoc(doc(db, documentName, documentRefID));
+};
