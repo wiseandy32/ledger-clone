@@ -17,7 +17,6 @@ function Login() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { state } = useLocation();
   const navigate = useNavigate();
-  const destination = !state ? "/user" : state.from;
 
   const login = async (e) => {
     e.preventDefault();
@@ -27,11 +26,12 @@ function Login() {
       const email = formData.get("email");
       const password = formData.get("password");
       const { user } = await signInWithEmailAndPassword(auth, email, password);
-      const userDoc = await getSingleDocument("uid", user.uid);
+      const userDoc = await getSingleDocument(user.uid);
 
       if (userDoc.isDeleted) {
         await deleteUserData(user.uid, user);
         localStorage.removeItem("id");
+        setIsSubmitting(false);
         setError("This user does not exist");
         return;
       }
@@ -44,10 +44,10 @@ function Login() {
         );
         return;
       }
-      return navigate(destination);
+      navigate(!state ? "/user" : state.from);
     } catch (error) {
       const { code } = error;
-
+      console.log(error);
       if (code === "auth/invalid-credential") {
         setError("Invalid email or password");
       }
