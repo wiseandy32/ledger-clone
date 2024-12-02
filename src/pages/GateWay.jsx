@@ -17,7 +17,7 @@ function GateWay() {
   const inputRef = useRef();
   const [isOpen, setIsOpen] = useState(false);
   const [amountDeposited, setAmountDeposited] = useState("");
-
+  console.log(data);
   const handleCopy = () => {
     const textToCopy = inputRef.current.value;
     if (textToCopy.trim()) {

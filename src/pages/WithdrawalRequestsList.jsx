@@ -36,7 +36,7 @@ function WithdrawalRequestsList() {
         const currentDocs = [];
         doc.forEach((d) => currentDocs.push(d.data()));
         setDocs(currentDocs);
-      }
+      },
     );
     return () => getLatestChanges();
   }, []);
@@ -102,13 +102,14 @@ function WithdrawalRequestsList() {
                       <DropdownMenuLabel>Actions</DropdownMenuLabel>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem
-                        onClick={() =>
+                        onClick={() => {
                           handleRequestApproval(
                             doc,
                             "withdrawal",
-                            "withdrawalRequests"
-                          )
-                        }
+                            "withdrawalRequests",
+                            doc.docRef,
+                          );
+                        }}
                       >
                         {!doc.isConfirmed
                           ? "Approve Request"
@@ -132,14 +133,14 @@ function WithdrawalRequestsList() {
                                   onClick: async () => {
                                     await deleteDocumentFromDB(
                                       "withdrawalRequests",
-                                      doc.docRef
+                                      doc.docRef,
                                     );
                                     toast.success(
-                                      `${doc.name} withdrawal request has been deleted.`
+                                      `${doc.name} withdrawal request has been deleted.`,
                                     );
                                   },
                                 },
-                              }
+                              },
                             );
                           } catch (error) {
                             console.error(error);

@@ -36,7 +36,7 @@ function DepositRequestsList() {
         const currentDocs = [];
         doc.forEach((d) => currentDocs.push(d.data()));
         setDocs(currentDocs);
-      }
+      },
     );
     return () => getLatestChanges();
   }, []);
@@ -95,13 +95,14 @@ function DepositRequestsList() {
                       <DropdownMenuLabel>Actions</DropdownMenuLabel>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem
-                        onClick={() =>
+                        onClick={() => {
                           handleRequestApproval(
                             request,
                             "deposit",
-                            "depositRequests"
-                          )
-                        }
+                            "depositRequests",
+                            request.docRef,
+                          );
+                        }}
                       >
                         {!request.isConfirmed
                           ? "Approve Request"
@@ -125,14 +126,14 @@ function DepositRequestsList() {
                                   onClick: async () => {
                                     await deleteDocumentFromDB(
                                       "depositRequests",
-                                      request.docRef
+                                      request.docRef,
                                     );
                                     toast.success(
-                                      `${request.name} deposit request has been deleted.`
+                                      `${request.name} deposit request has been deleted.`,
                                     );
                                   },
                                 },
-                              }
+                              },
                             );
                           } catch (error) {
                             console.error(error);
