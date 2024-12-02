@@ -1,6 +1,7 @@
 import { useAuth } from "@/context/auth/use-auth";
 import { useTheme } from "@/context/theme-provider";
 import { wallets } from "@/data";
+import { formatNumberWithCommas } from "@/lib/helpers";
 import { CryptoCurrencyMarket } from "react-ts-tradingview-widgets";
 
 const availableWallets = [
@@ -62,7 +63,9 @@ function UserDashboard() {
               )}
             </div>
             <div>
-              <p className="font-bold">{`$${wallet.balance || "0.00"}`}</p>
+              <p className="font-bold">{`$${
+                formatNumberWithCommas(+wallet.balance) || "$0.00"
+              }`}</p>
               <p>
                 {wallet.name}{" "}
                 {!wallet.name.includes("Withdrawal") ? "Balance" : ""}

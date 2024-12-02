@@ -12,23 +12,24 @@ import {
   where,
 } from "firebase/firestore";
 import { toast } from "sonner";
+import emailjs from "@emailjs/browser";
 
 export const filterCountries = (
   countries = [],
   priorityCountries = [],
   whitelist = [],
-  blacklist = []
+  blacklist = [],
 ) => {
   let countriesListedFirst = [];
   let filteredCountries = countries;
 
   if (whitelist.length > 0) {
     filteredCountries = countries.filter(
-      ({ countryShortCode }) => whitelist.indexOf(countryShortCode) > -1
+      ({ countryShortCode }) => whitelist.indexOf(countryShortCode) > -1,
     );
   } else if (blacklist.length > 0) {
     filteredCountries = countries.filter(
-      ({ countryShortCode }) => blacklist.indexOf(countryShortCode) === -1
+      ({ countryShortCode }) => blacklist.indexOf(countryShortCode) === -1,
     );
   }
 
@@ -36,7 +37,7 @@ export const filterCountries = (
     // ensure the countries are added in the order in which they are specified by the user
     priorityCountries.forEach((slug) => {
       const result = filteredCountries.find(
-        ({ countryShortCode }) => countryShortCode === slug
+        ({ countryShortCode }) => countryShortCode === slug,
       );
       if (result) {
         countriesListedFirst.push(result);
@@ -45,7 +46,7 @@ export const filterCountries = (
 
     filteredCountries = filteredCountries.filter(
       ({ countryShortCode }) =>
-        priorityCountries.indexOf(countryShortCode) === -1
+        priorityCountries.indexOf(countryShortCode) === -1,
     );
   }
 
@@ -58,18 +59,18 @@ export const filterRegions = (
   regions = [],
   priorityRegions = [],
   whitelist = [],
-  blacklist = []
+  blacklist = [],
 ) => {
   let regionsListedFirst = [];
   let filteredRegions = regions;
 
   if (whitelist.length > 0) {
     filteredRegions = regions.filter(
-      ({ shortCode }) => whitelist.indexOf(shortCode) > -1
+      ({ shortCode }) => whitelist.indexOf(shortCode) > -1,
     );
   } else if (blacklist.length > 0) {
     filteredRegions = regions.filter(
-      ({ shortCode }) => blacklist.indexOf(shortCode) === -1
+      ({ shortCode }) => blacklist.indexOf(shortCode) === -1,
     );
   }
 
@@ -77,7 +78,7 @@ export const filterRegions = (
     // ensure the Regions are added in the order in which they are specified by the user
     priorityRegions.forEach((slug) => {
       const result = filteredRegions.find(
-        ({ shortCode }) => shortCode === slug
+        ({ shortCode }) => shortCode === slug,
       );
       if (result) {
         regionsListedFirst.push(result);
@@ -85,7 +86,7 @@ export const filterRegions = (
     });
 
     filteredRegions = filteredRegions.filter(
-      ({ shortCode }) => priorityRegions.indexOf(shortCode) === -1
+      ({ shortCode }) => priorityRegions.indexOf(shortCode) === -1,
     );
   }
 
@@ -97,6 +98,25 @@ export const filterRegions = (
 export const getSingleDocument = async (uid, queryKey = "uid") => {
   const usersRef = collection(db, "users");
   const document = query(usersRef, where(`${queryKey}`, "==", uid));
+
+  try {
+    const querySnapshot = await getDocs(document);
+    if (!querySnapshot.empty) {
+      const doc = querySnapshot.docs[0].data();
+      return doc;
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const getTransactionDetail = async (
+  requestId,
+  docId,
+  queryKey = "docRef",
+) => {
+  const depositRef = collection(db, `${docId}`);
+  const document = query(depositRef, where(`${queryKey}`, "==", requestId));
 
   try {
     const querySnapshot = await getDocs(document);
@@ -155,7 +175,19 @@ export const capitalizeFirstLettersOfName = (word = "john doe") => {
     ?.reduce((prev, curr) => prev + curr[0]?.toUpperCase(), "");
 };
 
-export const handleRequestApproval = (doc, requestType, documentId) => {
+export const formatNumberWithCommas = (number) => {
+  return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+};
+
+export const capitalizeWord = (word = "jd") =>
+  word?.charAt(0)?.toUpperCase() + word.slice(1);
+
+export const handleRequestApproval = (
+  doc,
+  requestType,
+  documentId,
+  requestId,
+) => {
   if (doc.isConfirmed) {
     toast.info(
       `Click confirm to reverse ${doc.name} ${requestType} request approval`,
@@ -175,10 +207,10 @@ export const handleRequestApproval = (doc, requestType, documentId) => {
             // const field = `${doc.coinType}_balance`;
             await updateFirebaseDb("users", document.docRef, {
               [`${doc.method}`]: increment(
-                requestType === "deposit" ? -doc.amount : doc.amount
+                requestType === "deposit" ? -doc.amount : doc.amount,
               ),
               ledger_balance: increment(
-                requestType === "deposit" ? -doc.amount : doc.amount
+                requestType === "deposit" ? -doc.amount : doc.amount,
               ),
             });
 
@@ -186,11 +218,11 @@ export const handleRequestApproval = (doc, requestType, documentId) => {
               isConfirmed: false,
             });
             toast.success(
-              `${doc.name} ${requestType} request has been reversed`
+              `${doc.name} ${requestType} request has been reversed`,
             );
           },
         },
-      }
+      },
     );
   } else {
     toast.info(`Click confirm to approve ${doc.name} ${requestType} request`, {
@@ -205,17 +237,24 @@ export const handleRequestApproval = (doc, requestType, documentId) => {
         label: "Confirm",
         onClick: async () => {
           const document = await getSingleDocument(doc?.uid);
-
+          const transaction = await getTransactionDetail(
+            requestId,
+            `${
+              requestType === "deposit"
+                ? "depositRequests"
+                : "withdrawalRequests"
+            }`,
+          );
           await updateFirebaseDb("users", document.docRef, {
             [`${doc.method}`]: increment(
-              requestType === "deposit" ? doc.amount : -doc.amount
+              requestType === "deposit" ? doc.amount : -doc.amount,
             ),
             ledger_balance: increment(
-              requestType === "deposit" ? doc.amount : -doc.amount
+              requestType === "deposit" ? doc.amount : -doc.amount,
             ),
 
             withdrawal_balance: increment(
-              requestType === "withdrawal" ? doc.amount : 0
+              requestType === "withdrawal" ? doc.amount : 0,
             ),
           });
 
@@ -223,6 +262,15 @@ export const handleRequestApproval = (doc, requestType, documentId) => {
             isConfirmed: true,
           });
           toast.success(`${doc.name} ${requestType} request has been approved`);
+          await emailjs.send("service_q3ofwss", "template_8xsvj38", {
+            subject: `${capitalizeWord(requestType)} Request Approval`,
+            customer_name: `${capitalizeWord(transaction.name)}`,
+            request_type: `${capitalizeWord(requestType)}`,
+            transaction_id: `${transaction.docRef.slice(0, 7)}`,
+            request_method: `${capitalizeWord(transaction.coin)}`,
+            request_amount: `$${formatNumberWithCommas(+transaction.amount)}`,
+            to_email: `${transaction.email}`,
+          });
         },
       },
     });
