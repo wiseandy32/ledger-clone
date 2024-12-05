@@ -6,7 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/auth/use-auth";
 import { useRef } from "react";
-import { capitalizeFirstLettersOfName, handleFileSelect } from "@/lib/helpers";
+import { capitalizeFirstLettersOfName, updateFirebaseDb } from "@/lib/helpers";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import { auth } from "@/services/firebase";
@@ -17,10 +17,8 @@ import RegionSelect from "@/components/region-select";
 function UserProfile() {
   const [country, setCountry] = useState("");
   const [, setRegion] = useState("");
-  const { user, setUserImage, userImage } = useAuth();
-  // const [userImage, setUserImage] = useState(
-  //   JSON.parse(localStorage.getItem("dp")) || null
-  // );
+  const { user } = useAuth();
+
   const [isNotEditing, setIsNotEditing] = useState(true);
   const [isTouched, setIsTouched] = useState(false);
   const [isPasswordFieldTouched, setIsPasswordFieldTouched] = useState(false);
@@ -35,10 +33,6 @@ function UserProfile() {
   // TODO: finish this component: add region and postal id
   const fileInputRef = useRef(null);
 
-  const handleAvatarClick = () => {
-    fileInputRef.current?.click(); // Trigger the file input
-  };
-
   const handleFileChange = async (e) => {
     if (isNotEditing) {
       return;
@@ -52,18 +46,19 @@ function UserProfile() {
         const reader = new FileReader();
 
         reader.onload = () => {
-          setUserImage(reader.result);
+          const addUserPhoto = async () => {
+            await updateFirebaseDb("users", user.docRef, {
+              photo: reader.result,
+            });
+          };
+
+          addUserPhoto();
+
+          qc.invalidateQueries({ queryKey: ["uid"] });
         };
 
         reader.readAsDataURL(file);
       }
-
-      // setUserImage(reader.result);
-      // await handleFileSelect(file, (img) => setUserImage(img));
-      // qc.invalidateQueries({ queryKey: ["uid"] });
-
-      // // Optionally: Reset the file input to allow re-uploading the same file
-      // e.target.value = null;
     } catch (error) {
       console.error("Error handling file change:", error);
     }
@@ -83,11 +78,11 @@ function UserProfile() {
           className={`w-14 h-14 object-contain object-center ${
             isNotEditing === false && "cursor-pointer"
           }`}
-          onClick={handleAvatarClick}
+          onClick={() => fileInputRef.current?.click()}
         >
           <AvatarImage
             className="object-contain object-center"
-            src={userImage || user?.photoURL}
+            src={user?.photo}
           />
           <AvatarFallback>
             {capitalizeFirstLettersOfName(user?.name)}
@@ -141,14 +136,6 @@ function UserProfile() {
                 readOnly
               />
             </div>
-            {/* <div className="grid w-full max-w-sm items-center gap-1.5 md:col-start-1 md:col-end-2">
-              <Label htmlFor="firstName">First Name</Label>
-              <Input type="text" id="firstName" placeholder="First name" />
-            </div> */}
-            {/* <div className="grid w-full max-w-sm items-center gap-1.5 col-start-2 col-end-3">
-              <Label htmlFor="lastName">Full Name</Label>
-              <Input type="text" id="lastName" placeholder="Last name" />
-            </div> */}
             <div className="grid w-full max-w-sm items-center gap-1.5 md:col-start-2 md:col-end-3">
               <Label htmlFor="username">Username</Label>
               <Input
@@ -303,8 +290,8 @@ function UserProfile() {
                 {isPasswordFieldDisabled
                   ? "Edit"
                   : !isUpdatingPassword
-                  ? "Submit"
-                  : "Submitting"}
+                    ? "Submit"
+                    : "Submitting"}
               </Button>
             </div>
           </div>
@@ -355,7 +342,7 @@ function UserProfile() {
 
                     if (newPassword !== confirmNewPassword) {
                       setError(
-                        "Passwords do not match. Please ensure both fields are identical"
+                        "Passwords do not match. Please ensure both fields are identical",
                       );
                     } else {
                       setError("");
