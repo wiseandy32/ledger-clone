@@ -9,25 +9,17 @@ import { fetchUserByID } from "@/lib/helpers";
 
 function AuthProvider({ children }) {
   const [uid, setUid] = useState("");
-  const [userImage, setUserImage] = useState(
-    JSON.parse(localStorage.getItem("dp")) ||
-      auth?.currentUser?.photoURL ||
-      null
-  );
   const { data: user } = useQuery({
     queryKey: ["uid", uid],
     queryFn: async () => {
       const user = await fetchUserByID(uid);
       return user;
     },
-    // staleTime: Infinity,
   });
 
   const values = {
     user,
     uid,
-    userImage,
-    setUserImage,
   };
 
   useEffect(() => {

@@ -138,32 +138,6 @@ export const fetchUserByID = async (uid) => {
   return user;
 };
 
-const fileToBase64 = (file) => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = (error) => reject(error);
-    reader.readAsDataURL(file); // Convert file to Base64
-  });
-};
-
-export const handleFileSelect = async (file, changeImage) => {
-  if (!file) return;
-  try {
-    const userDetail = await getSingleDocument("uid", auth.currentUser.id);
-    // convert to base64
-    const base64String = await fileToBase64(file);
-    changeImage(base64String);
-    await updateUserProfile({
-      photoURL: base64String,
-    });
-    await updateFirebaseDb("users", userDetail.docRef, { photo: base64String });
-    localStorage.setItem("dp", JSON.stringify(base64String));
-  } catch (error) {
-    console.error("Error updating profile photo:", error.message);
-  }
-};
-
 export const updateFirebaseDb = async (documentPath, docId, data) => {
   const docRef = doc(db, documentPath, docId);
   await updateDoc(docRef, data);
@@ -285,4 +259,38 @@ export const deleteUserData = async (uid, user) => {
 
 export const deleteDocumentFromDB = async (documentName, documentRefID) => {
   await deleteDoc(doc(db, documentName, documentRefID));
+};
+
+export const uploadImage2 = async (image) => {
+  const url =
+    "https://api.imgbb.com/1/upload?expiration=600&key=fcfbab1bbb8556123872f4b04f744003";
+  const formData = new FormData();
+  formData.append("image", image);
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      body: formData,
+    });
+    const data = await response.json();
+    console.log(data);
+  } catch (error) {
+    console.error("Error:", error);
+  }
+};
+
+export const uploadImage = async (image) => {
+  const url =
+    "https://api.imgbb.com/1/upload?expiration=600&key=fcfbab1bbb8556123872f4b04f744003";
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      body: JSON.stringify({ image: image }),
+    });
+    const data = await response.json();
+    console.log(data);
+  } catch (error) {
+    console.error("Error:", error);
+  }
 };
