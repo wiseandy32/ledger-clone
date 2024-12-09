@@ -16,12 +16,13 @@ function CountrySelect({
   onChange = () => {},
   className,
   placeholder = "Country",
+  ...props
 }) {
   const countries = filterCountries(
     countryRegionData,
     priorityOptions,
     whitelist,
-    blacklist
+    blacklist,
   );
 
   return (
@@ -30,6 +31,8 @@ function CountrySelect({
         onChange(value);
       }}
       id="country"
+      name="country"
+      {...props}
     >
       <SelectTrigger className={className}>
         <SelectValue placeholder={placeholder} />

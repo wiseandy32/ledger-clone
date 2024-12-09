@@ -6,7 +6,11 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/auth/use-auth";
 import { useRef } from "react";
-import { capitalizeFirstLettersOfName, updateFirebaseDb } from "@/lib/helpers";
+import {
+  capitalizeFirstLettersOfName,
+  processData,
+  updateFirebaseDb,
+} from "@/lib/helpers";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import { auth } from "@/services/firebase";
@@ -15,10 +19,9 @@ import { Loader2 } from "lucide-react";
 import RegionSelect from "@/components/region-select";
 
 function UserProfile() {
-  const [country, setCountry] = useState("");
-  const [, setRegion] = useState("");
   const { user } = useAuth();
-
+  const [country, setCountry] = useState(user?.country || "");
+  const [countryRegion, setCountryRegion] = useState(user?.region || "");
   const [isNotEditing, setIsNotEditing] = useState(true);
   const [isTouched, setIsTouched] = useState(false);
   const [isPasswordFieldTouched, setIsPasswordFieldTouched] = useState(false);
@@ -30,10 +33,40 @@ function UserProfile() {
   const [passwordFieldCount, setPasswordFieldCount] = useState(0);
   const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
   const qc = useQueryClient();
-  // TODO: finish this component: add region and postal id
-  const fileInputRef = useRef(null);
 
-  const handleFileChange = async (e) => {
+  const fileInputRef = useRef(null);
+  const formRef = useRef(null);
+  const [displayPicture, setDisplayPicture] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [walletAddress, setWalletAddress] = useState("");
+
+  const handleSubmit = async () => {
+    // updating the dp here will exceed the maximum size of a document in firebase
+    const newProfileDetails = {
+      phone: phoneNumber,
+      country: country,
+      region: countryRegion,
+      walletAddress: walletAddress,
+    };
+
+    const currentProfileDetails = {
+      phone: user?.phone,
+      country: user?.country,
+      region: user?.region,
+      walletAddress: user?.walletAddress,
+    };
+
+    const updatedProfileDetails = processData(
+      newProfileDetails,
+      currentProfileDetails,
+    );
+
+    await updateFirebaseDb("users", user.docRef, updatedProfileDetails);
+    toast.success("Profile updated successfully.");
+    qc.invalidateQueries({ queryKey: ["uid"] });
+  };
+
+  const handleFileChange = (e) => {
     if (isNotEditing) {
       return;
     }
@@ -41,26 +74,26 @@ function UserProfile() {
     const file = e.target.files[0];
     if (!file) return;
 
-    try {
-      if (file) {
-        const reader = new FileReader();
+    if (file) {
+      const reader = new FileReader();
 
-        reader.onload = () => {
-          const addUserPhoto = async () => {
-            await updateFirebaseDb("users", user.docRef, {
-              photo: reader.result,
-            });
-          };
+      reader.onload = () => {
+        if (reader.result === user?.photo) {
+          return;
+        }
 
-          addUserPhoto();
+        updateFirebaseDb(
+          "users",
+          user.docRef,
+          {
+            photo: reader.result,
+          },
+          () => setDisplayPicture(user?.photo),
+        );
 
-          qc.invalidateQueries({ queryKey: ["uid"] });
-        };
-
-        reader.readAsDataURL(file);
-      }
-    } catch (error) {
-      console.error("Error handling file change:", error);
+        setDisplayPicture(reader.result);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -82,7 +115,7 @@ function UserProfile() {
         >
           <AvatarImage
             className="object-contain object-center"
-            src={user?.photo}
+            src={displayPicture || user?.photo}
           />
           <AvatarFallback>
             {capitalizeFirstLettersOfName(user?.name)}
@@ -98,10 +131,8 @@ function UserProfile() {
           disabled={isNotEditing}
           onChange={handleFileChange}
         />
-        {/* </div> */}
         <div className="mr-2 text-sm grid gap-1">
           <p className="font-extrabold">{user?.displayName}</p>
-          {/* <p>@jack_adams</p> */}
           <p className="text-slate-400">@{user?.username}</p>
         </div>
         <div className=" ml-auto">
@@ -111,15 +142,15 @@ function UserProfile() {
               setCount((prev) => prev + 1);
               const currentCount = count + 1;
               if (currentCount % 2 === 0 && isTouched) {
-                toast.success("Profile updated successfully");
+                handleSubmit();
               }
             }}
           >
-            {isNotEditing ? "Edit" : "Submit"}
+            {isNotEditing ? "Edit" : "Update"}
           </Button>
         </div>
       </div>
-      <form>
+      <form ref={formRef}>
         <fieldset className="bg-muted/50 rounded-md">
           <h3 className="p-5 mb-5 border-b-2 border-solid border-sidebar-border">
             Personal Information
@@ -162,30 +193,19 @@ function UserProfile() {
               <Label htmlFor="phoneNumber">Phone Number</Label>
               <Input
                 type="number"
+                name="phoneNumber"
                 id="phoneNumber"
                 placeholder="Type your phone number"
-                onBlur={(e) => {
+                onChange={(e) => {
                   if (e.target.value !== "") {
                     setIsTouched(true);
-                    localStorage.setItem("p", JSON.stringify(e.target.value));
                   }
+                  setPhoneNumber(e.target.value);
                 }}
-                value={
-                  JSON.parse(localStorage.getItem("p")) ||
-                  user?.phoneNumber ||
-                  undefined
-                }
+                value={phoneNumber || user?.phone}
                 disabled={isNotEditing}
               />
             </div>
-            {/* <div className="grid w-full max-w-sm items-center gap-1.5">
-              <Label htmlFor="wallet">Wallet</Label>
-              <Input
-                type="text"
-                id="wallet"
-                placeholder="Enter your wallet address"
-              />
-            </div> */}
           </div>
         </fieldset>
         <fieldset
@@ -199,28 +219,23 @@ function UserProfile() {
             <div className="grid w-full items-center gap-1.5 md:col-start-1 md:col-end-2">
               <Label htmlFor="country">Country</Label>
               <CountrySelect
-                onBlur={(e) => {
-                  if (e.target.value !== "") {
-                    setIsTouched(true);
-                    localStorage.setItem("c", JSON.stringify(e.target.value));
-                  }
+                value={country || user?.country}
+                onChange={(value) => {
+                  setIsTouched(true);
+                  setCountry(value);
                 }}
-                onChange={(value) => setCountry(value)}
-                priorityOptions={["US", "UK"]}
                 placeholder="Select your country"
               />
             </div>
             <div className="grid w-full items-center gap-1.5 md:col-start-2 md:col-end-3">
               <Label htmlFor="countryRegion">Region</Label>
               <RegionSelect
-                countryCode={country}
-                onBlur={(e) => {
-                  if (e.target.value !== "") {
-                    setIsTouched(true);
-                    localStorage.setItem("cr", JSON.stringify(e.target.value));
-                  }
+                countryName={country || user?.country}
+                value={countryRegion || user?.region}
+                onChange={(value) => {
+                  setIsTouched(true);
+                  setCountryRegion(value);
                 }}
-                onChange={(value) => setRegion(value)}
                 placeholder="Select your region"
               />
             </div>
@@ -230,17 +245,13 @@ function UserProfile() {
                 type="text"
                 id="walletAddress"
                 name="walletAddress"
-                onBlur={(e) => {
+                onChange={(e) => {
                   if (e.target.value !== "") {
                     setIsTouched(true);
-                    localStorage.setItem("wa", JSON.stringify(e.target.value));
                   }
+                  setWalletAddress(e.target.value);
                 }}
-                value={
-                  JSON.parse(localStorage.getItem("p")) ||
-                  user?.phoneNumber ||
-                  undefined
-                }
+                value={walletAddress || user?.walletAddress}
                 placeholder="Enter your wallet address"
                 className="w-full"
               />
