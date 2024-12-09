@@ -22,7 +22,7 @@ import { useAuth } from "@/context/auth/use-auth";
 import { capitalizeFirstLettersOfName } from "@/lib/helpers";
 
 export function NavUser() {
-  const { isMobile } = useSidebar();
+  const { isMobile, setOpenMobile } = useSidebar();
   const { user, userImage } = useAuth();
   const navigate = useNavigate();
 
@@ -80,7 +80,14 @@ export function NavUser() {
             <DropdownMenuGroup>
               <DropdownMenuItem>
                 <BadgeCheck />
-                <span onClick={() => navigate("/user/profile")}>Account</span>
+                <span
+                  onClick={() => {
+                    navigate("/user/profile");
+                    setOpenMobile(false);
+                  }}
+                >
+                  Account
+                </span>
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
