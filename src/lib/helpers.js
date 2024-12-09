@@ -138,9 +138,18 @@ export const fetchUserByID = async (uid) => {
   return user;
 };
 
-export const updateFirebaseDb = async (documentPath, docId, data) => {
-  const docRef = doc(db, documentPath, docId);
-  await updateDoc(docRef, data);
+export const updateFirebaseDb = async (documentPath, docId, data, callback) => {
+  try {
+    const docRef = doc(db, documentPath, docId);
+    await updateDoc(docRef, data);
+  } catch (error) {
+    if (error.message.includes("is longer than")) {
+      toast.error("File size should be less than 1mb");
+      callback();
+      return;
+    }
+    toast.error("Something went wrong. Try again later");
+  }
 };
 
 export const capitalizeFirstLettersOfName = (word = "john doe") => {
@@ -261,36 +270,26 @@ export const deleteDocumentFromDB = async (documentName, documentRefID) => {
   await deleteDoc(doc(db, documentName, documentRefID));
 };
 
-export const uploadImage2 = async (image) => {
-  const url =
-    "https://api.imgbb.com/1/upload?expiration=600&key=fcfbab1bbb8556123872f4b04f744003";
-  const formData = new FormData();
-  formData.append("image", image);
+export const processData = (newData, oldData) => {
+  // Check if all values in obj1 are falsy
+  const allFalsy = Object.values(newData).every((value) => !value);
+  if (allFalsy) return; // Exit if all values are falsy
+  // Filter obj1 to remove falsy values
+  const filteredNewData = Object.fromEntries(
+    Object.entries(newData).filter(([, value]) => value),
+  );
+  // Check if filteredObj1 is the same as obj2
+  const hasDifferences = Object.entries(filteredNewData).some(
+    ([key, value]) => oldData[key] !== value,
+  );
+  if (!hasDifferences) return; // Exit if there are no differences
 
-  try {
-    const response = await fetch(url, {
-      method: "POST",
-      body: formData,
-    });
-    const data = await response.json();
-    console.log(data);
-  } catch (error) {
-    console.error("Error:", error);
-  }
-};
+  // Create a new object with differing values
+  const updatedValues = Object.fromEntries(
+    Object.entries(filteredNewData).filter(
+      ([key, value]) => oldData[key] !== value,
+    ),
+  );
 
-export const uploadImage = async (image) => {
-  const url =
-    "https://api.imgbb.com/1/upload?expiration=600&key=fcfbab1bbb8556123872f4b04f744003";
-
-  try {
-    const response = await fetch(url, {
-      method: "POST",
-      body: JSON.stringify({ image: image }),
-    });
-    const data = await response.json();
-    console.log(data);
-  } catch (error) {
-    console.error("Error:", error);
-  }
+  return Object.keys(updatedValues).length > 0 ? updatedValues : null;
 };
