@@ -29,19 +29,19 @@ function Login() {
       const { user } = await signInWithEmailAndPassword(auth, email, password);
       const userDoc = await getSingleDocument(user.uid);
 
-      if (userDoc.isDeleted) {
-        await deleteUserData(user.uid, user);
-        localStorage.removeItem("id");
-        setIsSubmitting(false);
-        setError("This user does not exist");
-        return;
-      }
+      // if (userDoc.isDeleted) {
+      //   await deleteUserData(user.uid, user);
+      //   localStorage.removeItem("id");
+      //   setIsSubmitting(false);
+      //   setError("This user does not exist");
+      //   return;
+      // }
 
       if (!user.emailVerified) {
         signOut(auth);
         setIsSubmitting(false);
         setError(
-          "Email verification is required. Please verify your email to proceed"
+          "Email verification is required. Please verify your email to proceed",
         );
         return;
       }
