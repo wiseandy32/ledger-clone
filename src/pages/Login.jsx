@@ -29,13 +29,14 @@ function Login() {
       const { user } = await signInWithEmailAndPassword(auth, email, password);
       const userDoc = await getSingleDocument(user.uid);
 
-      // if (userDoc.isDeleted) {
-      //   await deleteUserData(user.uid, user);
-      //   localStorage.removeItem("id");
-      //   setIsSubmitting(false);
-      //   setError("This user does not exist");
-      //   return;
-      // }
+      if (userDoc.isDeleted) {
+        // await deleteUserData(user.uid, user);
+        localStorage.removeItem("id");
+        signOut(auth);
+        setIsSubmitting(false);
+        setError("This user does not exist");
+        return;
+      }
 
       if (!user.emailVerified) {
         signOut(auth);
