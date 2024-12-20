@@ -1,5 +1,6 @@
 import { columns } from "@/components/columns";
 import { DataTable } from "@/components/data-table";
+import { useAuth } from "@/context/auth/use-auth";
 import { getDocuments } from "@/lib/helpers";
 import { useEffect } from "react";
 import { useState } from "react";
@@ -210,12 +211,15 @@ import { useState } from "react";
 
 function TransactionHistoryPage() {
   const [info, setInfo] = useState([]);
+  const { user } = useAuth();
+
+  console.log(user);
 
   useEffect(() => {
     const ge = async () => {
       try {
         const infos = await getDocuments(
-          "euy9YzCT7OQ6N5jYga1cKD7Xc7e2",
+          user?.uid,
           "transactionsHistory",
           "uid"
         );
@@ -225,7 +229,7 @@ function TransactionHistoryPage() {
       }
     };
     ge();
-  }, []);
+  }, [user]);
 
   return (
     <>
