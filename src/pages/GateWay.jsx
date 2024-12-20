@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { getCurrentDate } from "@/lib/helpers";
 import { auth } from "@/services/firebase";
 import { addDataToDb } from "@/utils/auth";
 import { Check } from "lucide-react";
@@ -17,7 +18,7 @@ function GateWay() {
   const inputRef = useRef();
   const [isOpen, setIsOpen] = useState(false);
   const [amountDeposited, setAmountDeposited] = useState("");
-  console.log(data);
+
   const handleCopy = () => {
     const textToCopy = inputRef.current.value;
     if (textToCopy.trim()) {
@@ -47,7 +48,21 @@ function GateWay() {
     };
 
     try {
-      await addDataToDb("depositRequests", depositRequestInfo);
+      const depositID = await addDataToDb(
+        "depositRequests",
+        depositRequestInfo
+      );
+      await addDataToDb("transactionsHistory", {
+        uid: auth.currentUser.uid,
+        id: depositID,
+        coin: data.type,
+        type: "deposit",
+        amount: formData.get("depositAmount"),
+        status: "pending",
+        timestamp: Date.now(),
+        creationDate: getCurrentDate(),
+      });
+
       setAmountDeposited("");
     } catch (error) {
       console.error(error);

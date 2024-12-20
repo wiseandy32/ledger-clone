@@ -20,11 +20,17 @@ export const createUser = async (email, password, onError) => {
 export const addDataToDb = async (field, data) => {
   try {
     const docRef = doc(collection(db, field));
+    // if (field === "transactionsHistory") {
+
+    // }
     const updatedData = {
       ...data,
       docRef: docRef.id,
     };
     await setDoc(docRef, updatedData);
+    if (field === "withdrawalRequests" || field === "depositRequests") {
+      return docRef.id;
+    }
   } catch (error) {
     console.error(error);
   }
