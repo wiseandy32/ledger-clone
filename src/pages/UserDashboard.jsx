@@ -4,27 +4,21 @@ import { wallets } from "@/data";
 import { formatNumberWithCommas } from "@/lib/helpers";
 import { CryptoCurrencyMarket } from "react-ts-tradingview-widgets";
 
-const availableWallets = [
-  "BTC_balance",
-  "XRP_balance",
-  "XLM_balance",
-  "ETH_balance",
-  "USDT_balance",
-  "DOGE_balance",
-  "withdrawal_balance",
-  "ledger_balance",
-];
-
 function UserDashboard() {
   const { user } = useAuth();
   const { theme } = useTheme();
 
   const dashboardWallets = wallets.map((wallet) => {
-    if (availableWallets.includes(wallet.value) && user) {
+    if (user) {
+      if (!user[wallet.value]) {
+        return;
+      }
+
       const amount = user[wallet.value];
+
       return {
         ...wallet,
-        balance: amount ? wallet.balance + +amount : wallet.balance,
+        balance: wallet.balance + +amount,
       };
     } else {
       return wallet;
@@ -45,7 +39,7 @@ function UserDashboard() {
       <div className="grid md:grid-cols-4 gap-4 mb-10 mt-3">
         {dashboardWallets.map((wallet, index) => (
           <div
-            key={wallet.name}
+            key={wallet?.name}
             className={`md:col-start-[${index + 1}] md:col-end-[${
               index + 3
             }] bg-muted/50 flex gap-6 min-w-[200px] items-center  p-4 rounded-sm shadow-[0_.5rem_1rem_rgba(255,_255,_255,_0.15)]"
@@ -53,22 +47,22 @@ function UserDashboard() {
           >
             <div
               className={`h-10 w-10 grid place-content-center ${
-                wallet.name.includes("Ledger") ? "bg-purple-700" : ""
+                wallet?.name?.includes("Ledger") ? "bg-purple-700" : ""
               }`}
             >
-              {!wallet.name.includes("Ledger") ? (
-                <img src={wallet.icon} className="w-full h-full" alt="" />
+              {!wallet?.name?.includes("Ledger") ? (
+                <img src={wallet?.icon} className="w-full h-full" alt="" />
               ) : (
                 <wallet.icon />
               )}
             </div>
             <div>
               <p className="font-bold">{`$${
-                formatNumberWithCommas(+wallet.balance) || "$0.00"
+                formatNumberWithCommas(+wallet?.balance) || "$0.00"
               }`}</p>
               <p>
-                {wallet.name}{" "}
-                {!wallet.name.includes("Withdrawal") ? "Balance" : ""}
+                {wallet?.name}{" "}
+                {!wallet?.name?.includes("Withdrawal") ? "Balance" : ""}
               </p>
             </div>
           </div>
