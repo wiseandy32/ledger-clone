@@ -13,6 +13,7 @@ import { LayoutGrid } from "lucide-react";
 import { Download } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import { User2 } from "lucide-react";
+import { ArrowRightLeft } from "lucide-react";
 // This is sample data.
 const data = {
   navMain: [
@@ -30,6 +31,11 @@ const data = {
       title: "Withdraw fund",
       url: "withdraw",
       icon: GrUploadOption,
+    },
+    {
+      title: "Transactions",
+      url: "transactions",
+      icon: ArrowRightLeft,
     },
   ],
   admin: [

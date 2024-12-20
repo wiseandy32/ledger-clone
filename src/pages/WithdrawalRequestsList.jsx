@@ -36,7 +36,7 @@ function WithdrawalRequestsList() {
         const currentDocs = [];
         doc.forEach((d) => currentDocs.push(d.data()));
         setDocs(currentDocs);
-      },
+      }
     );
     return () => getLatestChanges();
   }, []);
@@ -107,7 +107,7 @@ function WithdrawalRequestsList() {
                             doc,
                             "withdrawal",
                             "withdrawalRequests",
-                            doc.docRef,
+                            doc.docRef
                           );
                         }}
                       >
@@ -119,7 +119,7 @@ function WithdrawalRequestsList() {
                         onClick={async () => {
                           try {
                             toast.warning(
-                              `Are you sure you want to delete ${doc.name} deposit request? This action is irreversible`,
+                              `Are you sure you want to delete ${doc.name} withdrawal request? This action is irreversible`,
                               {
                                 duration: Infinity,
                                 cancel: {
@@ -133,14 +133,14 @@ function WithdrawalRequestsList() {
                                   onClick: async () => {
                                     await deleteDocumentFromDB(
                                       "withdrawalRequests",
-                                      doc.docRef,
+                                      doc.docRef
                                     );
                                     toast.success(
-                                      `${doc.name} withdrawal request has been deleted.`,
+                                      `${doc.name} withdrawal request has been deleted.`
                                     );
                                   },
                                 },
-                              },
+                              }
                             );
                           } catch (error) {
                             console.error(error);

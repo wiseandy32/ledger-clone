@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/select";
 import { useAuth } from "@/context/auth/use-auth";
 import { withdrawalOptions } from "@/data";
+import { getCurrentDate } from "@/lib/helpers";
 import { auth } from "@/services/firebase";
 import { addDataToDb } from "@/utils/auth";
 import { Label } from "@radix-ui/react-dropdown-menu";
@@ -55,7 +56,33 @@ function Withdrawal() {
         isConfirmed: false,
       };
 
-      await addDataToDb("withdrawalRequests", withdrawalRequestInfo);
+      const getMethod = () => {
+        let method = "";
+        withdrawalOptions.filter((option) => {
+          if (option.value === formData.get("WithdrawalMethod")) {
+            method = option.title;
+          }
+        });
+
+        return method;
+      };
+      const withdrawalID = await addDataToDb(
+        "withdrawalRequests",
+        withdrawalRequestInfo
+      );
+
+      await addDataToDb("transactionsHistory", {
+        uid: auth.currentUser.uid,
+        id: withdrawalID,
+        // id: withdrawalID.slice(0, 7),
+        coin: getMethod(),
+        type: "withdrawal",
+        amount: formData.get("amount"),
+        status: "pending",
+        timestamp: Date.now(),
+        creationDate: getCurrentDate(),
+      });
+
       setIsOpen(true);
       setIsSubmitting(false);
     } catch (error) {

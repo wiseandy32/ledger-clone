@@ -1,5 +1,5 @@
 import { auth, db } from "@/services/firebase";
-import { updateUserProfile } from "@/utils/auth";
+// import { updateUserProfile } from "@/utils/auth";
 import { deleteUser } from "firebase/auth";
 import {
   collection,
@@ -18,18 +18,18 @@ export const filterCountries = (
   countries = [],
   priorityCountries = [],
   whitelist = [],
-  blacklist = [],
+  blacklist = []
 ) => {
   let countriesListedFirst = [];
   let filteredCountries = countries;
 
   if (whitelist.length > 0) {
     filteredCountries = countries.filter(
-      ({ countryShortCode }) => whitelist.indexOf(countryShortCode) > -1,
+      ({ countryShortCode }) => whitelist.indexOf(countryShortCode) > -1
     );
   } else if (blacklist.length > 0) {
     filteredCountries = countries.filter(
-      ({ countryShortCode }) => blacklist.indexOf(countryShortCode) === -1,
+      ({ countryShortCode }) => blacklist.indexOf(countryShortCode) === -1
     );
   }
 
@@ -37,7 +37,7 @@ export const filterCountries = (
     // ensure the countries are added in the order in which they are specified by the user
     priorityCountries.forEach((slug) => {
       const result = filteredCountries.find(
-        ({ countryShortCode }) => countryShortCode === slug,
+        ({ countryShortCode }) => countryShortCode === slug
       );
       if (result) {
         countriesListedFirst.push(result);
@@ -46,7 +46,7 @@ export const filterCountries = (
 
     filteredCountries = filteredCountries.filter(
       ({ countryShortCode }) =>
-        priorityCountries.indexOf(countryShortCode) === -1,
+        priorityCountries.indexOf(countryShortCode) === -1
     );
   }
 
@@ -59,18 +59,18 @@ export const filterRegions = (
   regions = [],
   priorityRegions = [],
   whitelist = [],
-  blacklist = [],
+  blacklist = []
 ) => {
   let regionsListedFirst = [];
   let filteredRegions = regions;
 
   if (whitelist.length > 0) {
     filteredRegions = regions.filter(
-      ({ shortCode }) => whitelist.indexOf(shortCode) > -1,
+      ({ shortCode }) => whitelist.indexOf(shortCode) > -1
     );
   } else if (blacklist.length > 0) {
     filteredRegions = regions.filter(
-      ({ shortCode }) => blacklist.indexOf(shortCode) === -1,
+      ({ shortCode }) => blacklist.indexOf(shortCode) === -1
     );
   }
 
@@ -78,7 +78,7 @@ export const filterRegions = (
     // ensure the Regions are added in the order in which they are specified by the user
     priorityRegions.forEach((slug) => {
       const result = filteredRegions.find(
-        ({ shortCode }) => shortCode === slug,
+        ({ shortCode }) => shortCode === slug
       );
       if (result) {
         regionsListedFirst.push(result);
@@ -86,7 +86,7 @@ export const filterRegions = (
     });
 
     filteredRegions = filteredRegions.filter(
-      ({ shortCode }) => priorityRegions.indexOf(shortCode) === -1,
+      ({ shortCode }) => priorityRegions.indexOf(shortCode) === -1
     );
   }
 
@@ -112,10 +112,10 @@ export const getSingleDocument = async (uid, queryKey = "uid") => {
 
 export const getTransactionDetail = async (
   requestId,
-  docId,
-  queryKey = "docRef",
+  documentName,
+  queryKey = "docRef"
 ) => {
-  const depositRef = collection(db, `${docId}`);
+  const depositRef = collection(db, `${documentName}`);
   const document = query(depositRef, where(`${queryKey}`, "==", requestId));
 
   try {
@@ -124,6 +124,24 @@ export const getTransactionDetail = async (
       const doc = querySnapshot.docs[0].data();
       return doc;
     }
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const getDocuments = async (requestId, documentName, queryKey) => {
+  const depositRef = collection(db, `${documentName}`);
+  const document = query(depositRef, where(`${queryKey}`, "==", requestId));
+  const documents = [];
+  try {
+    const querySnapshot = await getDocs(document);
+    if (!querySnapshot.empty) {
+      querySnapshot.forEach((doc) => {
+        documents.push(doc.data());
+      });
+      return documents;
+    }
+    return null;
   } catch (error) {
     console.error(error);
   }
@@ -169,7 +187,7 @@ export const handleRequestApproval = (
   doc,
   requestType,
   documentId,
-  requestId,
+  requestId
 ) => {
   if (doc.isConfirmed) {
     toast.info(
@@ -190,22 +208,35 @@ export const handleRequestApproval = (
             // const field = `${doc.coinType}_balance`;
             await updateFirebaseDb("users", document.docRef, {
               [`${doc.method}`]: increment(
-                requestType === "deposit" ? -doc.amount : doc.amount,
+                requestType === "deposit" ? -doc.amount : doc.amount
               ),
               ledger_balance: increment(
-                requestType === "deposit" ? -doc.amount : doc.amount,
+                requestType === "deposit" ? -doc.amount : doc.amount
               ),
             });
 
             await updateFirebaseDb(documentId, doc.docRef, {
               isConfirmed: false,
             });
+            const transactionHistoryDetail = await getTransactionDetail(
+              doc.docRef,
+              "transactionsHistory",
+              "id"
+            );
+
+            await updateFirebaseDb(
+              "transactionsHistory",
+              transactionHistoryDetail.docRef,
+              {
+                status: "pending",
+              }
+            );
             toast.success(
-              `${doc.name} ${requestType} request has been reversed`,
+              `${doc.name} ${requestType} request has been reversed`
             );
           },
         },
-      },
+      }
     );
   } else {
     toast.info(`Click confirm to approve ${doc.name} ${requestType} request`, {
@@ -226,25 +257,38 @@ export const handleRequestApproval = (
               requestType === "deposit"
                 ? "depositRequests"
                 : "withdrawalRequests"
-            }`,
+            }`
           );
           await updateFirebaseDb("users", document.docRef, {
             [`${doc.method}`]: increment(
-              requestType === "deposit" ? doc.amount : -doc.amount,
+              requestType === "deposit" ? doc.amount : -doc.amount
             ),
             ledger_balance: increment(
-              requestType === "deposit" ? doc.amount : -doc.amount,
+              requestType === "deposit" ? doc.amount : -doc.amount
             ),
 
             withdrawal_balance: increment(
-              requestType === "withdrawal" ? doc.amount : 0,
+              requestType === "withdrawal" ? doc.amount : 0
             ),
           });
 
           await updateFirebaseDb(documentId, doc.docRef, {
             isConfirmed: true,
           });
-          toast.success(`${doc.name} ${requestType} request has been approved`);
+          const transactionHistoryDetail = await getTransactionDetail(
+            doc.docRef,
+            "transactionsHistory",
+            "id"
+          );
+
+          await updateFirebaseDb(
+            "transactionsHistory",
+            transactionHistoryDetail.docRef,
+            {
+              status: "confirmed",
+            }
+          );
+
           await emailjs.send("service_q3ofwss", "template_8xsvj38", {
             subject: `${capitalizeWord(requestType)} Request Approval`,
             customer_name: `${capitalizeWord(transaction.name)}`,
@@ -254,6 +298,8 @@ export const handleRequestApproval = (
             request_amount: `$${formatNumberWithCommas(+transaction.amount)}`,
             to_email: `${transaction.email}`,
           });
+
+          toast.success(`${doc.name} ${requestType} request has been approved`);
         },
       },
     });
@@ -276,20 +322,40 @@ export const processData = (newData, oldData) => {
   if (allFalsy) return; // Exit if all values are falsy
   // Filter obj1 to remove falsy values
   const filteredNewData = Object.fromEntries(
-    Object.entries(newData).filter(([, value]) => value),
+    Object.entries(newData).filter(([, value]) => value)
   );
   // Check if filteredObj1 is the same as obj2
   const hasDifferences = Object.entries(filteredNewData).some(
-    ([key, value]) => oldData[key] !== value,
+    ([key, value]) => oldData[key] !== value
   );
   if (!hasDifferences) return; // Exit if there are no differences
 
   // Create a new object with differing values
   const updatedValues = Object.fromEntries(
     Object.entries(filteredNewData).filter(
-      ([key, value]) => oldData[key] !== value,
-    ),
+      ([key, value]) => oldData[key] !== value
+    )
   );
 
   return Object.keys(updatedValues).length > 0 ? updatedValues : null;
+};
+
+export const getCurrentDate = () => {
+  const date = new Date();
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const year = String(date.getFullYear());
+
+  return `${day}-${month}-${year}`;
+};
+
+export const getTimeInMilliseconds = () => Date.now();
+
+export const convertMilliSecondsToFormattedTime = (milliseconds) => {
+  const date = new Date(milliseconds);
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  const seconds = String(date.getSeconds()).padStart(2, "0");
+
+  return `${hours}:${minutes}:${seconds}`;
 };

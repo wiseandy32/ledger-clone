@@ -17,6 +17,7 @@ import DepositRequestsList from "@/pages/DepositRequestsList";
 import WithdrawalRequestsList from "@/pages/WithdrawalRequestsList";
 import UsersList from "@/pages/UsersList";
 import { fetchUserByID } from "@/lib/helpers";
+import TransactionHistoryPage from "@/pages/Transactions";
 
 const router = createBrowserRouter(
   [
@@ -54,12 +55,7 @@ const router = createBrowserRouter(
     {
       loader: async ({ request }) => {
         const uid = localStorage.getItem("id");
-        const from =
-          "/" +
-          request.url
-            .split("/")
-            .slice(3)
-            .join("/");
+        const from = "/" + request.url.split("/").slice(3).join("/");
         if (!uid) {
           return redirect("/login", { state: { from } });
         }
@@ -106,6 +102,11 @@ const router = createBrowserRouter(
             return data;
           },
           element: <GateWay />,
+        },
+        {
+          path: "transactions",
+          element: <TransactionHistoryPage />,
+          // element: <p>transactions</p>,
         },
       ],
     },
