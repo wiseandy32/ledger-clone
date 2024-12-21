@@ -39,7 +39,6 @@ function UserProfile() {
   const [displayPicture, setDisplayPicture] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [walletAddress, setWalletAddress] = useState("");
-
   const handleSubmit = async () => {
     // updating the dp here will exceed the maximum size of a document in firebase
     const newProfileDetails = {
@@ -58,7 +57,7 @@ function UserProfile() {
 
     const updatedProfileDetails = processData(
       newProfileDetails,
-      currentProfileDetails,
+      currentProfileDetails
     );
 
     await updateFirebaseDb("users", user.docRef, updatedProfileDetails);
@@ -88,7 +87,7 @@ function UserProfile() {
           {
             photo: reader.result,
           },
-          () => setDisplayPicture(user?.photo),
+          () => setDisplayPicture(user?.photo)
         );
 
         setDisplayPicture(reader.result);
@@ -301,8 +300,8 @@ function UserProfile() {
                 {isPasswordFieldDisabled
                   ? "Edit"
                   : !isUpdatingPassword
-                    ? "Submit"
-                    : "Submitting"}
+                  ? "Submit"
+                  : "Submitting"}
               </Button>
             </div>
           </div>
@@ -353,7 +352,7 @@ function UserProfile() {
 
                     if (newPassword !== confirmNewPassword) {
                       setError(
-                        "Passwords do not match. Please ensure both fields are identical",
+                        "Passwords do not match. Please ensure both fields are identical"
                       );
                     } else {
                       setError("");
