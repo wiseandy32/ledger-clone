@@ -7,6 +7,7 @@ import { Suspense } from "react";
 import { Await } from "react-router-dom";
 import { useLoaderData } from "react-router-dom";
 import DashboardSkeleton from "@/components/DashboardSkeleton";
+import { Navigate } from "react-router-dom";
 
 function DashboardLayout() {
   const data = useLoaderData();
@@ -21,7 +22,14 @@ function DashboardLayout() {
             resolve={data.user}
             errorElement={<p>Something wrong happened!</p>}
           >
-            <Outlet />;
+            {(user) => {
+              if (user?.isAdmin) {
+                console.log("true");
+                return <Navigate to={"/admin"} />;
+              } else {
+                return <Outlet />;
+              }
+            }}
           </Await>
         </Suspense>
       </Dashboard>
