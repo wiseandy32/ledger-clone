@@ -1,8 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { getCurrentDate } from "@/lib/helpers";
-import { auth } from "@/services/firebase";
+import { useAuth } from "@/context/auth/use-auth";
+import { addDataToSubCollection, getCurrentDate } from "@/lib/helpers";
+// import { auth } from "@/services/firebase";
 import { addDataToDb } from "@/utils/auth";
 import { Check } from "lucide-react";
 import { CopyIcon } from "lucide-react";
@@ -18,6 +19,7 @@ function GateWay() {
   const inputRef = useRef();
   const [isOpen, setIsOpen] = useState(false);
   const [amountDeposited, setAmountDeposited] = useState("");
+  const { user } = useAuth();
 
   const handleCopy = () => {
     const textToCopy = inputRef.current.value;
@@ -38,12 +40,14 @@ function GateWay() {
     setIsOpen(true);
     const formData = new FormData(e.target);
     const depositRequestInfo = {
-      uid: auth.currentUser.uid,
+      uid: user.uid,
+      userDocRef: user.docRef,
       method: data.value,
+      timestamp: Date.now(),
       coin: data.type,
-      name: auth.currentUser.displayName,
-      amount: formData.get("depositAmount"),
-      email: auth.currentUser.email,
+      name: user.displayName,
+      amount: +formData.get("depositAmount"),
+      email: user.email,
       isConfirmed: false,
     };
 
@@ -52,13 +56,14 @@ function GateWay() {
         "depositRequests",
         depositRequestInfo
       );
-      await addDataToDb("transactionsHistory", {
-        uid: auth.currentUser.uid,
+
+      await addDataToSubCollection("users", user.docRef, "transactions", {
         id: depositID,
         coin: data.type,
         type: "deposit",
-        amount: formData.get("depositAmount"),
+        amount: +formData.get("depositAmount"),
         status: "pending",
+        userDocRef: user.docRef,
         timestamp: Date.now(),
         creationDate: getCurrentDate(),
       });

@@ -1,5 +1,4 @@
 import { auth, db } from "@/services/firebase";
-// import { updateUserProfile } from "@/utils/auth";
 import { deleteUser } from "firebase/auth";
 import {
   collection,
@@ -8,6 +7,7 @@ import {
   getDocs,
   increment,
   query,
+  setDoc,
   updateDoc,
   where,
 } from "firebase/firestore";
@@ -110,6 +110,77 @@ export const getSingleDocument = async (uid, queryKey = "uid") => {
   }
 };
 
+export const getSubCollectionDocuments = async (
+  parentCollection,
+  parentDocId,
+  subCollectionName
+) => {
+  const subCollectionRef = collection(
+    db,
+    parentCollection,
+    parentDocId,
+    subCollectionName
+  );
+
+  try {
+    const querySnapshot = await getDocs(subCollectionRef);
+    const documents = querySnapshot.docs.map((doc) => doc.data());
+    return documents || [];
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const getSingleSubCollectionDocument = async (
+  parentCollection,
+  parentDocId,
+  subCollectionName,
+  queryKey,
+  requestId
+) => {
+  const subCollectionRef = collection(
+    db,
+    parentCollection,
+    parentDocId,
+    subCollectionName
+  );
+
+  const document = query(
+    subCollectionRef,
+    where(`${queryKey}`, "==", requestId)
+  );
+  try {
+    const querySnapshot = await getDocs(document);
+    if (!querySnapshot.empty) {
+      const doc = querySnapshot.docs[0].data();
+      return doc;
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const addDataToSubCollection = async (
+  parentCollection,
+  parentDocId,
+  subCollectionName,
+  data
+) => {
+  const subCollectionRef = doc(
+    collection(db, parentCollection, parentDocId, subCollectionName)
+  );
+
+  try {
+    const updatedData = {
+      ...data,
+      docRef: subCollectionRef.id,
+    };
+    await setDoc(subCollectionRef, updatedData);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 export const getTransactionDetail = async (
   requestId,
   documentName,
@@ -152,7 +223,6 @@ export const fetchUserByID = async (uid) => {
   const currentUser = auth.currentUser;
   const userDoc = await getSingleDocument(uid);
   const user = { ...currentUser, ...userDoc };
-  // changeUserID(user.uid);
   return user;
 };
 
@@ -167,6 +237,28 @@ export const updateFirebaseDb = async (documentPath, docId, data, callback) => {
       return;
     }
     toast.error("Something went wrong. Try again later");
+  }
+};
+
+export const updateSubCollectionDocument = async (
+  parentCollection,
+  parentDocId,
+  subCollectionName,
+  subDocId,
+  data
+) => {
+  const docRef = doc(
+    db,
+    parentCollection,
+    parentDocId,
+    subCollectionName,
+    subDocId
+  );
+
+  try {
+    await updateDoc(docRef, data);
+  } catch (error) {
+    console.Console(error);
   }
 };
 
@@ -187,7 +279,8 @@ export const handleRequestApproval = (
   doc,
   requestType,
   documentId,
-  requestId
+  requestId,
+  userRef
 ) => {
   if (doc.isConfirmed) {
     toast.info(
@@ -205,7 +298,6 @@ export const handleRequestApproval = (
           onClick: async () => {
             const document = await getSingleDocument(doc?.uid);
 
-            // const field = `${doc.coinType}_balance`;
             await updateFirebaseDb("users", document.docRef, {
               [`${doc.method}`]: increment(
                 requestType === "deposit" ? -doc.amount : doc.amount
@@ -218,14 +310,20 @@ export const handleRequestApproval = (
             await updateFirebaseDb(documentId, doc.docRef, {
               isConfirmed: false,
             });
-            const transactionHistoryDetail = await getTransactionDetail(
-              doc.docRef,
-              "transactionsHistory",
-              "id"
-            );
 
-            await updateFirebaseDb(
-              "transactionsHistory",
+            const transactionHistoryDetail =
+              await getSingleSubCollectionDocument(
+                "users",
+                userRef,
+                "transactions",
+                "id",
+                doc.docRef
+              );
+
+            await updateSubCollectionDocument(
+              "users",
+              userRef,
+              "transactions",
               transactionHistoryDetail.docRef,
               {
                 status: "pending",
@@ -275,14 +373,19 @@ export const handleRequestApproval = (
           await updateFirebaseDb(documentId, doc.docRef, {
             isConfirmed: true,
           });
-          const transactionHistoryDetail = await getTransactionDetail(
-            doc.docRef,
-            "transactionsHistory",
-            "id"
+
+          const transactionHistoryDetail = await getSingleSubCollectionDocument(
+            "users",
+            userRef,
+            "transactions",
+            "id",
+            doc.docRef
           );
 
-          await updateFirebaseDb(
-            "transactionsHistory",
+          await updateSubCollectionDocument(
+            "users",
+            userRef,
+            "transactions",
             transactionHistoryDetail.docRef,
             {
               status: "confirmed",
@@ -317,14 +420,14 @@ export const deleteDocumentFromDB = async (documentName, documentRefID) => {
 };
 
 export const processData = (newData, oldData) => {
-  // Check if all values in obj1 are falsy
+  // Check if all values in newData are falsy
   const allFalsy = Object.values(newData).every((value) => !value);
   if (allFalsy) return; // Exit if all values are falsy
-  // Filter obj1 to remove falsy values
+  // Filter newData to remove falsy values
   const filteredNewData = Object.fromEntries(
     Object.entries(newData).filter(([, value]) => value)
   );
-  // Check if filteredObj1 is the same as obj2
+  // Check if filteredNewData is the same as the oldData
   const hasDifferences = Object.entries(filteredNewData).some(
     ([key, value]) => oldData[key] !== value
   );

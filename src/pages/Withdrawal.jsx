@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/select";
 import { useAuth } from "@/context/auth/use-auth";
 import { withdrawalOptions } from "@/data";
-import { getCurrentDate } from "@/lib/helpers";
+import { addDataToSubCollection, getCurrentDate } from "@/lib/helpers";
 import { auth } from "@/services/firebase";
 import { addDataToDb } from "@/utils/auth";
 import { Label } from "@radix-ui/react-dropdown-menu";
@@ -49,8 +49,10 @@ function Withdrawal() {
         uid: auth.currentUser.uid,
         method: formData.get("WithdrawalMethod"),
         coin: withdrawalMethod[0],
+        userDocRef: user.docRef,
         name: auth.currentUser.displayName,
-        amount: formData.get("amount"),
+        amount: +formData.get("amount"),
+        timestamp: Date.now(),
         walletAddress: formData.get("walletAddress"),
         email: auth.currentUser.email,
         isConfirmed: false,
@@ -71,13 +73,12 @@ function Withdrawal() {
         withdrawalRequestInfo
       );
 
-      await addDataToDb("transactionsHistory", {
-        uid: auth.currentUser.uid,
+      await addDataToSubCollection("users", user.docRef, "transactions", {
         id: withdrawalID,
-        // id: withdrawalID.slice(0, 7),
+        userDocRef: user.docRef,
         coin: getMethod(),
         type: "withdrawal",
-        amount: formData.get("amount"),
+        amount: +formData.get("amount"),
         status: "pending",
         timestamp: Date.now(),
         creationDate: getCurrentDate(),
