@@ -141,27 +141,27 @@ export const chooseUsCardInfo = [
 ];
 
 export const wallets = [
-  { name: "Ledger", icon: DollarSign, balance: 0, value: "ledger_balance" },
-  { name: "BTC", icon: btcIcon, balance: 0, value: "BTC_balance" },
-  { name: "ETH", icon: ethIcon, balance: 0, value: "ETH_balance" },
-  { name: "USDT", icon: usdtIcon, balance: 0, value: "USDT_balance" },
-  { name: "XLM", icon: xlmIcon, balance: 0, value: "XLM_balance" },
-  { name: "XRP", icon: xrpIcon, balance: 0, value: "XRP_balance" },
-  { name: "DOGE", icon: dogeIcon, balance: 0, value: "DOGE_balance" },
-  { name: "LTC", icon: ltcIcon, balance: 0 },
-  { name: "ALGO", icon: algoIcon, balance: 0, value: "ALGO_balance" },
-  { name: "SOL", icon: solIcon, balance: 0, value: "SOL_balance" },
-  { name: "BNB", icon: bnbIcon, balance: 0 },
-  { name: "QTUM", icon: qtumIcon, balance: 0 },
-  { name: "TEZOS", icon: tezosIcon, balance: 0 },
-  { name: "THETA", icon: thetaIcon, balance: 0 },
-  { name: "FILECoin", icon: fileCoinIcon, balance: 0 },
-  { name: "NANO", icon: nanoIcon, balance: 0 },
-  { name: "SHIBA", icon: shibaIcon, balance: 0 },
+  { name: "Ledger", icon: DollarSign, balance: 0.0, value: "ledger_balance" },
+  { name: "BTC", icon: btcIcon, balance: 0.0, value: "BTC_balance" },
+  { name: "ETH", icon: ethIcon, balance: 0.0, value: "ETH_balance" },
+  { name: "USDT", icon: usdtIcon, balance: 0.0, value: "USDT_balance" },
+  { name: "XLM", icon: xlmIcon, balance: 0.0, value: "XLM_balance" },
+  { name: "XRP", icon: xrpIcon, balance: 0.0, value: "XRP_balance" },
+  { name: "DOGE", icon: dogeIcon, balance: 0.0, value: "DOGE_balance" },
+  { name: "LTC", icon: ltcIcon, balance: 0.0 },
+  { name: "ALGO", icon: algoIcon, balance: 0.0, value: "ALGO_balance" },
+  { name: "SOL", icon: solIcon, balance: 0.0, value: "SOL_balance" },
+  { name: "BNB", icon: bnbIcon, balance: 0.0 },
+  { name: "QTUM", icon: qtumIcon, balance: 0.0 },
+  { name: "TEZOS", icon: tezosIcon, balance: 0.0 },
+  { name: "THETA", icon: thetaIcon, balance: 0.0 },
+  { name: "FILECoin", icon: fileCoinIcon, balance: 0.0 },
+  { name: "NANO", icon: nanoIcon, balance: 0.0 },
+  { name: "SHIBA", icon: shibaIcon, balance: 0.0 },
   {
     name: "Total Withdrawals",
     icon: thetaIcon,
-    balance: 0,
+    balance: 0.0,
     value: "withdrawal_balance",
   },
 ];
@@ -173,8 +173,8 @@ export const depositMethods = [
   { name: "XLM", icon: xlmIcon, path: "xlm" },
   { name: "USDT TRC20", icon: usdtIcon, path: "usdt" },
   { name: "DOGEcoin", icon: dogeIcon, path: "dogecoin" },
-  {name: "ALGO", icon: algoIcon, path: "algo" },
-  {name: "Solana", icon: solIcon, path: "sol"}
+  { name: "ALGO", icon: algoIcon, path: "algo" },
+  { name: "Solana", icon: solIcon, path: "sol" },
 ];
 
 export const paymentGateways = [
@@ -225,14 +225,14 @@ export const paymentGateways = [
     type: "Sol",
     value: "SOL_balance",
     qrCode: solQRCode,
-    walletAddress: "BsfZQAEfvbkxfDQFFGqXfQNVV7y8L6rCprs7MY3VykSf"
+    walletAddress: "BsfZQAEfvbkxfDQFFGqXfQNVV7y8L6rCprs7MY3VykSf",
   },
   {
     type: "Algo",
     value: "ALGO_balance",
     qrCode: algoQRCode,
-    walletAddress: "YCAFLK3SGL4EHGKI7FG2NBWP5JWCMNID3PINF5F3QLQXJMOKRC4SDA36TM"
-  }
+    walletAddress: "YCAFLK3SGL4EHGKI7FG2NBWP5JWCMNID3PINF5F3QLQXJMOKRC4SDA36TM",
+  },
 ];
 
 export const withdrawalOptions = [

@@ -10,15 +10,11 @@ function UserDashboard() {
 
   const dashboardWallets = wallets.map((wallet) => {
     if (user) {
-      if (!user[wallet.value]) {
-        return;
-      }
-
       const amount = user[wallet.value];
 
       return {
         ...wallet,
-        balance: wallet.balance + +amount,
+        balance: amount ? wallet.balance + +amount : wallet.balance,
       };
     } else {
       return wallet;
@@ -57,9 +53,9 @@ function UserDashboard() {
               )}
             </div>
             <div>
-              <p className="font-bold">{`$${
-                formatNumberWithCommas(+wallet?.balance) || "$0.00"
-              }`}</p>
+              <p className="font-bold">{`$${formatNumberWithCommas(
+                +wallet?.balance
+              )}`}</p>
               <p>
                 {wallet?.name}{" "}
                 {!wallet?.name?.includes("Withdrawal") ? "Balance" : ""}
