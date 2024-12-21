@@ -95,7 +95,7 @@ function GateWay() {
           </p>
         </div>
         <div className="grid place-content-center">
-          <img src={data.qrCode} alt="" width={330} />
+          <img src={data.qrCode} alt="" width={330} height={300} />
         </div>
         <div className="grid w-full items-center gap-1.5 relative">
           <Label htmlFor="walletAddress" className="capitalize">
