@@ -59,13 +59,9 @@ const router = createBrowserRouter(
         if (!uid) {
           return redirect("/login", { state: { from } });
         }
+        const userPromise = fetchUserByID(uid);
 
-        const user = await fetchUserByID(uid);
-        if (user.isAdmin) {
-          return redirect("/admin");
-        }
-
-        return null;
+        return { user: userPromise };
       },
       path: "/user",
       element: <DashboardLayout />,
