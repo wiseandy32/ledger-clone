@@ -6,6 +6,7 @@ import {
   doc,
   getDocs,
   increment,
+  onSnapshot,
   query,
   setDoc,
   updateDoc,
@@ -461,4 +462,29 @@ export const convertMilliSecondsToFormattedTime = (milliseconds) => {
   const seconds = String(date.getSeconds()).padStart(2, "0");
 
   return `${hours}:${minutes}:${seconds}`;
+};
+
+export const subscribeToSubCollection = (
+  parentCollection,
+  parentDocId,
+  subCollectionName,
+  onUpdate
+) => {
+  const subCollectionRef = collection(
+    db,
+    parentCollection,
+    parentDocId,
+    subCollectionName
+  );
+
+  // subscribe to real time update
+  const unsubscribe = onSnapshot(
+    subCollectionRef,
+    () => onUpdate(),
+    (error) => {
+      console.error("Error subscribing to updates: ", error);
+    }
+  );
+
+  return unsubscribe;
 };

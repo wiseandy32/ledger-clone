@@ -1,11 +1,16 @@
 import { columns } from "@/components/columns";
 import { DataTable } from "@/components/data-table";
 import { useAuth } from "@/context/auth/use-auth";
-import { getSubCollectionDocuments } from "@/lib/helpers";
-import { useQuery } from "@tanstack/react-query";
+import {
+  getSubCollectionDocuments,
+  subscribeToSubCollection,
+} from "@/lib/helpers";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect } from "react";
 
 function TransactionHistoryPage() {
   const { user } = useAuth();
+  const qc = useQueryClient();
   const { data: transactions } = useQuery({
     queryKey: ["user", user?.uid],
     queryFn: async () => {
@@ -17,6 +22,19 @@ function TransactionHistoryPage() {
       return documents;
     },
   });
+
+  useEffect(() => {
+    if (user) {
+      const unsubscribe = subscribeToSubCollection(
+        "users",
+        user?.docRef,
+        "transactions",
+        () => qc.invalidateQueries({ queryKey: ["user"] })
+      );
+
+      return unsubscribe;
+    }
+  }, [user, user?.docRef, qc]);
 
   return (
     <>
