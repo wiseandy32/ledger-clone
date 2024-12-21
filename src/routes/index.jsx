@@ -106,16 +106,16 @@ const router = createBrowserRouter(
         {
           path: "transactions",
           element: <TransactionHistoryPage />,
-          // element: <p>transactions</p>,
         },
       ],
     },
     {
-      loader: async () => {
+      loader: async ({ request }) => {
         const uid = localStorage.getItem("id");
+        const from = "/" + request.url.split("/").slice(3).join("/");
 
         if (!uid) {
-          return null;
+          return redirect("/login", { state: { from } });
         }
 
         const user = await fetchUserByID(uid);
