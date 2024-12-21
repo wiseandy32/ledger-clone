@@ -107,7 +107,8 @@ function WithdrawalRequestsList() {
                             doc,
                             "withdrawal",
                             "withdrawalRequests",
-                            doc.docRef
+                            doc.docRef,
+                            doc.userDocRef
                           );
                         }}
                       >
