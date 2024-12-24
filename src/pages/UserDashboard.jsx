@@ -1,11 +1,11 @@
-import { useAuth } from "@/context/auth/use-auth";
 import { useTheme } from "@/context/theme-provider";
 import { wallets } from "@/data";
 import { formatNumberWithCommas } from "@/lib/helpers";
+import { useAsyncValue } from "react-router-dom";
 import { CryptoCurrencyMarket } from "react-ts-tradingview-widgets";
 
 function UserDashboard() {
-  const { user } = useAuth();
+  const user = useAsyncValue();
   const { theme } = useTheme();
 
   const dashboardWallets = wallets.map((wallet) => {
