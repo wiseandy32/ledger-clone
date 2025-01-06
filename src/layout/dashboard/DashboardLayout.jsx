@@ -24,7 +24,6 @@ function DashboardLayout() {
           >
             {(user) => {
               if (user?.isAdmin) {
-                console.log("true");
                 return <Navigate to={"/admin"} />;
               } else {
                 return <Outlet />;

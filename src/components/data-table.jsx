@@ -30,15 +30,6 @@ import { DateRangePicker } from "./date-range-picker";
 export function DataTable({ columns, data }) {
   const [sorting, setSorting] = useState([]);
   const [columnFilters, setColumnFilters] = useState([]);
-  //   const [dateRange, setDateRange] = useState({
-  //     from: undefined,
-  //     to: undefined,
-  //   });
-  const [, setDateRange] = useState({
-    from: undefined,
-    to: undefined,
-  });
-
   const table = useReactTable({
     data,
     columns,
@@ -56,7 +47,6 @@ export function DataTable({ columns, data }) {
 
   const handleDateRangeChange = useCallback(
     (range) => {
-      setDateRange(range);
       if (range.from && range.to) {
         table.getColumn("creationDate")?.setFilterValue([range.from, range.to]);
       } else {
@@ -70,7 +60,6 @@ export function DataTable({ columns, data }) {
     table.getColumn("type")?.setFilterValue("");
     table.getColumn("status")?.setFilterValue("");
     table.getColumn("creationDate")?.setFilterValue(undefined);
-    setDateRange({ from: undefined, to: undefined });
   }, [table]);
 
   return (
@@ -117,7 +106,7 @@ export function DataTable({ columns, data }) {
         <Button
           variant="outline"
           onClick={handleClearFilters}
-          className="ml-auto"
+          className="ml-auto dark:bg-[#0B1120]"
         >
           Clear Filters
         </Button>
