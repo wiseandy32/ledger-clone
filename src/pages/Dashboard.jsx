@@ -72,7 +72,7 @@ function Dashboard({ children }) {
           {children}
         </div>
       </SidebarInset>
-    </> // </section>
+    </>
   );
 }
 
